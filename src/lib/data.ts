@@ -13,19 +13,32 @@ type Db = {
   categories: Category[];
 };
 
+// In-memory cache for the database
+let cache: Db | null = null;
+
 // --- Read the database file ---
 async function readDb(): Promise<Db> {
+  // If cache exists, return it
+  if (cache) {
+    return cache;
+  }
+
   try {
     const fileContent = await fs.readFile(dbPath, 'utf-8');
-    return JSON.parse(fileContent);
+    cache = JSON.parse(fileContent) as Db;
+    return cache;
   } catch (error) {
-    // If the file doesn't exist, return a default structure
-    return { articles: [], categories: [] };
+    // If the file doesn't exist, return a default structure and cache it
+    const defaultDb = { articles: [], categories: [] };
+    cache = defaultDb;
+    return cache;
   }
 }
 
 // --- Write to the database file ---
 async function writeDb(data: Db): Promise<void> {
+  // Update the cache first
+  cache = data;
   await fs.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
@@ -81,7 +94,7 @@ export const saveArticle = async (article: Omit<Article, 'id' | 'category' | 'cr
       return a;
     });
     if (!updatedArticle) throw new Error('Article not found for update');
-    await writeDb(db);
+    await writeDb({ ...db, articles: db.articles });
     return updatedArticle;
   } else {
     // Create new article
@@ -96,15 +109,15 @@ export const saveArticle = async (article: Omit<Article, 'id' | 'category' | 'cr
       category,
     };
     db.articles.push(newArticle);
-    await writeDb(db);
+    await writeDb({ ...db, articles: db.articles });
     return newArticle;
   }
 };
 
 export const deleteArticle = async (id: string): Promise<void> => {
   const db = await readDb();
-  db.articles = db.articles.filter(a => a.id !== id);
-  await writeDb(db);
+  const newArticles = db.articles.filter(a => a.id !== id);
+  await writeDb({ ...db, articles: newArticles });
 };
 
 export const saveCategory = async (category: Omit<Category, 'id' | 'slug'> & { id?: string }): Promise<Category> => {
@@ -139,6 +152,6 @@ export const deleteCategory = async (id: string): Promise<void> => {
   if (articlesWithCategory.length > 0) {
     throw new Error('Cannot delete category with associated articles.');
   }
-  db.categories = db.categories.filter(c => c.id !== id);
-  await writeDb(db);
+  const newCategories = db.categories.filter(c => c.id !== id);
+  await writeDb({ ...db, categories: newCategories });
 };
