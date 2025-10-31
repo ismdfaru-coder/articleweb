@@ -8,6 +8,8 @@ import { MobileMenu } from "./MobileMenu";
 import {
   Sheet,
   SheetContent,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { useState } from "react";
@@ -60,6 +62,9 @@ export function Header({ categories }: { categories: Category[] }) {
                   </Button>
                 </SheetTrigger>
                 <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle className="sr-only">Menu</SheetTitle>
+                  </SheetHeader>
                   <MobileMenu categories={categories} />
                 </SheetContent>
               </Sheet>
