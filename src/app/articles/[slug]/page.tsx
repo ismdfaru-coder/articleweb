@@ -9,11 +9,10 @@ import { useEffect, useState, use } from 'react';
 import type { Article } from '@/lib/types';
 
 type ArticlePageProps = {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 };
 
-export default function ArticlePage({ params: paramsPromise }: ArticlePageProps) {
-  const params = use(paramsPromise);
+export default function ArticlePage({ params }: ArticlePageProps) {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
