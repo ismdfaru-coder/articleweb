@@ -150,12 +150,13 @@ export const getCategories = unstable_cache(
 );
 
 export const getCategoryById = async (id: string): Promise<Category | undefined> => {
-  return categories.find((c) => c.id === id);
+  return (await getCategories()).find((c) => c.id === id);
 };
 
 // Functions to simulate writing data
 export const saveArticle = async (article: Omit<Article, 'id' | 'category' | 'createdAt'> & { id?: string }): Promise<Article> => {
-  const category = await getCategoryById(article.categoryId);
+  const allCategories = await getCategories();
+  const category = allCategories.find(c => c.id === article.categoryId);
   if (!category) throw new Error('Category not found');
 
   if (article.id) {
