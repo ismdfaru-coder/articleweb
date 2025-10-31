@@ -11,7 +11,9 @@ export default async function Home() {
   const articles = await getArticles();
 
   const featuredArticle = articles.find((a) => a.featured) || articles[0];
-  const recentArticles = articles.filter((a) => a.id !== featuredArticle?.id).slice(0, 6);
+  const otherArticles = articles.filter((a) => a.id !== featuredArticle?.id);
+  const topArticles = otherArticles.slice(0, 4);
+  const recentArticles = otherArticles.slice(4, 10);
 
   if (!articles.length) {
     return (
@@ -26,22 +28,34 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto max-w-7xl px-4 py-8">
           {featuredArticle && <FeaturedArticle article={featuredArticle} />}
 
-          <section className="mt-16">
-            <h2 className="font-headline text-3xl font-bold tracking-tight md:text-4xl">
-              Latest Insights
-            </h2>
-            <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {recentArticles.map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-            </div>
-          </section>
+          {topArticles.length > 0 && (
+            <section className="mt-12">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+                {topArticles.map((article) => (
+                  <ArticleCard key={article.id} article={article} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {recentArticles.length > 0 && (
+            <section className="mt-12">
+              <h2 className="font-headline text-2xl font-bold tracking-tight text-primary">
+                Latest
+              </h2>
+               <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                 {recentArticles.map((article) => (
+                  <ArticleCard key={article.id} article={article} />
+                ))}
+               </div>
+            </section>
+          )}
         </div>
       </main>
       <Footer />
@@ -57,26 +71,26 @@ function FeaturedArticle({ article }: { article: Article }) {
   });
 
   return (
-    <section>
-      <Link href={`/articles/${article.slug}`} className="group block overflow-hidden rounded-lg">
-        <div className="grid md:grid-cols-2 md:gap-8">
-          <div className="relative aspect-video">
+    <section className="rounded-lg bg-white dark:bg-slate-800 shadow-md overflow-hidden">
+      <Link href={`/articles/${article.slug}`} className="group block">
+        <div className="grid md:grid-cols-2">
+          <div className="relative h-64 md:h-auto">
             <Image
               src={article.imageUrl}
               alt={article.title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover"
               data-ai-hint={article.imageHint}
               priority
             />
           </div>
-          <div className="mt-4 flex flex-col justify-center md:mt-0">
+          <div className="p-8">
             {article.category && (
               <Badge variant="secondary" className="w-fit">
                 {article.category.name}
               </Badge>
             )}
-            <h1 className="font-headline mt-4 text-3xl font-bold tracking-tight text-foreground/90 group-hover:text-foreground md:text-4xl lg:text-5xl">
+            <h1 className="font-headline mt-4 text-3xl font-bold tracking-tight text-foreground/90 group-hover:text-primary md:text-4xl">
               {article.title}
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">{article.excerpt}</p>
@@ -89,7 +103,7 @@ function FeaturedArticle({ article }: { article: Article }) {
                 className="rounded-full"
               />
               <div>
-                <p className="font-semibold">{article.author}</p>
+                <p className="font-semibold text-sm uppercase tracking-wider">{article.author}</p>
                 <p className="text-sm text-muted-foreground">
                   {formattedDate}
                 </p>
