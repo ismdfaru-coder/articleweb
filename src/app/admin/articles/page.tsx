@@ -98,6 +98,10 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
     day: 'numeric',
   });
 
+  // A simple way to check if the current row is the one being deleted.
+  // In a real app with optimistic updates, this would be more complex.
+  const isDeleting = isPending; 
+
   return (
     <TableRow>
       <TableCell className="font-medium">{article.title}</TableCell>
@@ -114,7 +118,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
         <ArticleRowActions 
           articleId={article.id} 
           onDelete={() => onDelete(article.id)} 
-          isDeleting={isPending && article.id === article.id} // be more specific
+          isDeleting={isDeleting}
         />
       </TableCell>
     </TableRow>
