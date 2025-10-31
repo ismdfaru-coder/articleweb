@@ -1,4 +1,4 @@
-import { getArticleBySlug } from '@/lib/data';
+import { getArticleBySlug, getCategories } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ type ArticlePageProps = {
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = await getArticleBySlug(params.slug);
+  const categories = await getCategories();
 
   if (!article) {
     notFound();
@@ -25,7 +26,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header categories={categories} />
       <main className="flex-1">
         <article className="container mx-auto max-w-4xl px-4 py-8">
           <header className="mb-8">

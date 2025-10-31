@@ -89,3 +89,7 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.section-title {
+  @apply font-headline text-sm font-bold uppercase tracking-wider text-primary border-b-2 border-primary w-fit pb-1 mb-4;
+}

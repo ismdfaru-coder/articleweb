@@ -1,22 +1,41 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
+import type { Category } from "@/lib/types";
 
-export function Header() {
+export function Header({ categories }: { categories: Category[] }) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-slate-900">
-      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center space-x-2">
-          <span className="font-headline text-2xl font-bold text-primary">Life Reality Insights</span>
-        </Link>
-        <div className="flex items-center gap-4">
-           {/* Future nav links can go here */}
-           <Button variant="ghost" size="icon">
-            <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
-           </Button>
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <div className="container mx-auto max-w-7xl px-4">
+        {/* Top Header */}
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="font-headline text-3xl font-extrabold uppercase tracking-tighter border-2 border-black px-2 py-1">Life Reality Insights</span>
+          </Link>
+          <div className="flex items-center gap-4">
+             <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Menu</span>
+             </Button>
+          </div>
         </div>
+        
+        {/* Bottom Navigation */}
+        <Separator />
+        <nav className="flex h-12 items-center justify-start overflow-x-auto text-sm font-medium">
+           <Link href="/" className="px-3 py-2 uppercase tracking-wider text-muted-foreground hover:text-foreground">Latest</Link>
+           {categories.map(category => (
+             <Link key={category.id} href="#" className="px-3 py-2 uppercase tracking-wider text-muted-foreground hover:text-foreground">
+              {category.name}
+             </Link>
+           ))}
+        </nav>
       </div>
+      <Separator />
     </header>
   );
+}
+
+function Separator() {
+  return <div className="h-px w-full bg-border" />;
 }
