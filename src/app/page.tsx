@@ -58,17 +58,16 @@ export default function Home() {
 }
 
 function FeaturedArticle({ article }: { article: Article }) {
-  const [formattedDate, setFormattedDate] = useState('');
-
+  const [isClient, setIsClient] = useState(false);
   useEffect(() => {
-    if (article.createdAt) {
-      setFormattedDate(new Date(article.createdAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }));
-    }
-  }, [article.createdAt]);
+    setIsClient(true);
+  }, []);
+
+  const formattedDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) : '';
 
   return (
     <section>
@@ -101,7 +100,7 @@ function FeaturedArticle({ article }: { article: Article }) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                {formattedDate ? (
+                {isClient ? (
                   <p className="text-sm text-muted-foreground">
                     {formattedDate}
                   </p>

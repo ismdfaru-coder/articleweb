@@ -70,13 +70,12 @@ export default function AdminArticlesPage() {
 }
 
 function ArticleRow({ article }: { article: Article }) {
-  const [formattedDate, setFormattedDate] = useState('');
-
+  const [isClient, setIsClient] = useState(false);
   useEffect(() => {
-    if (article.createdAt) {
-      setFormattedDate(new Date(article.createdAt).toLocaleDateString());
-    }
-  }, [article.createdAt]);
+    setIsClient(true);
+  }, []);
+
+  const formattedDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString() : '';
 
   return (
     <TableRow>
@@ -88,7 +87,7 @@ function ArticleRow({ article }: { article: Article }) {
         </Badge>
       </TableCell>
       <TableCell>
-        {formattedDate ? formattedDate : <div className="h-4 bg-muted w-24 rounded-md animate-pulse" />}
+        {isClient ? formattedDate : <div className="h-4 bg-muted w-24 rounded-md animate-pulse" />}
       </TableCell>
       <TableCell>
         <DropdownMenu>

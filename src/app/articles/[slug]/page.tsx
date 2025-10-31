@@ -16,9 +16,10 @@ type ArticlePageProps = {
 
 export default function ArticlePage({ params }: ArticlePageProps) {
   const [article, setArticle] = useState<Article | null>(null);
-  const [formattedDate, setFormattedDate] = useState<string>('');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     getArticleBySlug(params.slug).then(articleData => {
       if (!articleData) {
         notFound();
@@ -27,15 +28,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
     });
   }, [params.slug]);
 
-  useEffect(() => {
-    if (article) {
-      setFormattedDate(new Date(article.createdAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }));
-    }
-  }, [article]);
+  const formattedDate = article ? new Date(article.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) : '';
 
 
   if (!article) {
@@ -72,7 +69,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                {formattedDate ? (
+                {isClient ? (
                   <p className="text-sm text-muted-foreground">
                     Published on {formattedDate}
                   </p>
