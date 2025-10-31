@@ -16,7 +16,7 @@ type ArticlePageProps = {
 
 export default function ArticlePage({ params }: ArticlePageProps) {
   const [article, setArticle] = useState<Article | null>(null);
-  const [formattedDate, setFormattedDate] = useState('');
+  const [formattedDate, setFormattedDate] = useState<string | null>(null);
 
   useEffect(() => {
     getArticleBySlug(params.slug).then(articleData => {
@@ -24,13 +24,19 @@ export default function ArticlePage({ params }: ArticlePageProps) {
         notFound();
       }
       setArticle(articleData);
-      setFormattedDate(new Date(articleData.createdAt).toLocaleDateString('en-US', {
+    });
+  }, [params.slug]);
+
+  useEffect(() => {
+    if (article) {
+      setFormattedDate(new Date(article.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
       }));
-    });
-  }, [params.slug]);
+    }
+  }, [article]);
+
 
   if (!article) {
     return (
@@ -66,9 +72,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                <p className="text-sm text-muted-foreground">
-                  Published on {formattedDate}
-                </p>
+                {formattedDate && (
+                  <p className="text-sm text-muted-foreground">
+                    Published on {formattedDate}
+                  </p>
+                )}
               </div>
             </div>
           </header>
