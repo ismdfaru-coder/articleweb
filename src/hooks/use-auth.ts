@@ -36,6 +36,7 @@ export function useAuth() {
     setError(null);
     try {
       const isValid = await verifyAdminCredentials({ username, password });
+      
       if (isValid) {
         setAuthState({ isAuthenticated: true, username });
         try {
@@ -43,23 +44,24 @@ export function useAuth() {
         } catch (e) {
           console.error("Could not access localStorage", e);
         }
+        setIsLoading(false);
         return true;
       } else {
         setError('Invalid username or password');
         setAuthState({ isAuthenticated: false, username: null });
         try {
-            localStorage.removeItem(AUTH_KEY);
+          localStorage.removeItem(AUTH_KEY);
         } catch (e) {
-            console.error("Could not access localStorage", e);
+          console.error("Could not access localStorage", e);
         }
+        setIsLoading(false);
         return false;
       }
     } catch (e) {
       console.error("Login verification failed", e);
       setError('An error occurred during login.');
-      return false;
-    } finally {
       setIsLoading(false);
+      return false;
     }
   };
 
