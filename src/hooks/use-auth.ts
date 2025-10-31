@@ -40,7 +40,7 @@ export function useAuth() {
       if (isValid) {
         setAuthState({ isAuthenticated: true, username });
         try {
-          localStorage.setItem(AUTH_KEY, JSON.stringify({ username }));
+          localStorage.setItem(AUTH_KEY, JSON.stringify({ username, isAuthenticated: true }));
         } catch (e) {
           console.error("Could not access localStorage", e);
         }

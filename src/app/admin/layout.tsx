@@ -27,12 +27,30 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthenticated, isLoading, logout } = useAuth();
+   const [authChecked, setAuthChecked] = React.useState(false);
+
 
   React.useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    // This effect runs once on mount to check auth status from localStorage
+    try {
+        const storedAuth = localStorage.getItem('life-reality-auth');
+        if (!storedAuth || !JSON.parse(storedAuth).isAuthenticated) {
+            router.push('/login');
+        } else {
+            setAuthChecked(true);
+        }
+    } catch (error) {
+        console.error("Auth check failed", error);
+        router.push('/login');
+    }
+  }, [router]);
+
+  React.useEffect(() => {
+    // This effect runs when the auth state from the hook changes
+    if (!isLoading && !isAuthenticated && authChecked) {
       router.push('/login');
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router, authChecked]);
 
 
   const handleLogout = () => {
@@ -40,7 +58,7 @@ export default function AdminLayout({
     router.push('/login');
   };
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading || !authChecked) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Loading...</p>
