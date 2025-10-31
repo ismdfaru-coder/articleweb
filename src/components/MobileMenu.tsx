@@ -14,7 +14,7 @@ export function MobileMenu({ categories }: MobileMenuProps) {
       className="h-full w-full bg-white p-6"
     >
       <div className="relative mb-8">
-        <Input placeholder="Search Lifehacker" className="h-12 text-lg pr-12" />
+        <Input placeholder="Search Life Reality" className="h-12 text-lg pr-12" />
         <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
       </div>
 

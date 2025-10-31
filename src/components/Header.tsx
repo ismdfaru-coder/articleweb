@@ -27,7 +27,7 @@ export function Header({ categories }: { categories: Category[] }) {
           {searchOpen ? (
              <div className="flex items-center gap-2 w-full max-w-md">
                 <div className="relative flex-grow">
-                   <Input placeholder="Search Lifehacker" className="pr-10" autoFocus/>
+                   <Input placeholder="Search Life Reality" className="pr-10" autoFocus/>
                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setSearchOpen(false)}>
