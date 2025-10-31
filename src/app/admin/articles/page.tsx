@@ -1,4 +1,3 @@
-'use client';
 import Link from 'next/link';
 import * as React from 'react';
 import { getArticles } from '@/lib/data';
@@ -20,39 +19,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useEffect, useTransition } from 'react';
 import type { Article } from '@/lib/types';
-import { useRouter } from 'next/navigation';
+import { ArticleRowActions } from './ArticleRowActions';
 
-export default function AdminArticlesPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
-  useEffect(() => {
-    // Fetch articles on mount and whenever the component is focused
-    // to ensure the list is fresh after navigation.
-    const fetchArticles = () => getArticles().then(setArticles);
-    
-    fetchArticles();
-    
-    window.addEventListener('focus', fetchArticles);
-    return () => {
-      window.removeEventListener('focus', fetchArticles);
-    };
-  }, []);
-  
-  const handleDeleteArticle = (id: string) => {
-    const formData = new FormData();
-    formData.append('id', id);
-
-    startTransition(async () => {
-      await deleteArticle(formData);
-      // Re-fetch articles after deletion
-      const updatedArticles = await getArticles();
-      setArticles(updatedArticles);
-    });
-  };
+export default async function AdminArticlesPage() {
+  const articles = await getArticles();
 
   return (
     <div>
@@ -81,7 +53,7 @@ export default function AdminArticlesPage() {
           </TableHeader>
           <TableBody>
             {articles.map((article) => (
-              <ArticleRow key={article.id} article={article} onDelete={handleDeleteArticle} isPending={isPending} />
+              <ArticleRow key={article.id} article={article} />
             ))}
           </TableBody>
         </Table>
@@ -93,15 +65,12 @@ export default function AdminArticlesPage() {
   );
 }
 
-function ArticleRow({ article, onDelete, isPending }: { article: Article, onDelete: (id: string) => void, isPending: boolean }) {
-  const formRef = React.useRef<HTMLFormElement>(null);
-  
+function ArticleRow({ article }: { article: Article }) {
   const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
-
 
   return (
     <TableRow>
@@ -116,27 +85,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
         {formattedDate}
       </TableCell>
       <TableCell>
-         <form ref={formRef} action={() => onDelete(article.id)} className="hidden">
-            <input type="hidden" name="id" value={article.id} />
-        </form>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button aria-haspopup="true" size="icon" variant="ghost">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href={`/admin/articles/edit/${article.id}`}>
-                 Edit
-              </Link>
-            </DropdownMenuItem>
-             <DropdownMenuItem onClick={() => formRef.current?.requestSubmit()} disabled={isPending} className="text-destructive focus:text-destructive focus:bg-destructive/10">
-                {isPending ? 'Deleting...' : 'Delete'}
-             </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ArticleRowActions articleId={article.id} />
       </TableCell>
     </TableRow>
   )

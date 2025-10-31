@@ -37,7 +37,7 @@ export async function saveArticle(formData: FormData) {
 
   const savedArticle = await dbSaveArticle(validated.data);
   
-  revalidatePath('/admin/articles');
+  revalidateTag('articles');
   revalidatePath('/');
   revalidatePath(`/articles/${validated.data.slug}`);
 
@@ -47,12 +47,9 @@ export async function saveArticle(formData: FormData) {
 export async function deleteArticle(formData: FormData) {
   const id = formData.get('id') as string;
   if (!id) return;
-  
-  const form = new FormData();
-  form.append('id', id);
 
   await dbDeleteArticle(id);
-  revalidatePath('/admin/articles');
+  revalidateTag('articles');
   revalidatePath('/');
 }
 

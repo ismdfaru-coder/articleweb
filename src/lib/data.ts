@@ -114,31 +114,29 @@ author: 'Alex Innovate',
 ];
 
 // Functions to simulate fetching data
-export const getArticles = async (): Promise<Article[]> => {
-  // Add category object to each article
-  const articlesWithCategories = articles.map(article => {
-    const category = categories.find(c => c.id === article.categoryId);
-    return { ...article, category: category! };
-  });
-  return articlesWithCategories.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
+export const getArticles = unstable_cache(
+  async (): Promise<Article[]> => {
+    // Add category object to each article
+    const articlesWithCategories = articles.map(article => {
+      const category = categories.find(c => c.id === article.categoryId);
+      return { ...article, category: category! };
+    });
+    return articlesWithCategories.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+  ['articles'],
+  { tags: ['articles'] }
+);
 
 export const getArticleById = async (id: string): Promise<Article | undefined> => {
-  const article = articles.find((a) => a.id === id);
-  if (article) {
-    const category = categories.find(c => c.id === article.categoryId);
-    return { ...article, category: category! };
-  }
-  return undefined;
+  const allArticles = await getArticles();
+  const article = allArticles.find((a) => a.id === id);
+  return article;
 };
 
 export const getArticleBySlug = async (slug: string): Promise<Article | undefined> => {
-  const article = articles.find((a) => a.slug === slug);
-  if (article) {
-    const category = categories.find(c => c.id === article.categoryId);
-    return { ...article, category: category! };
-  }
-  return undefined;
+  const allArticles = await getArticles();
+  const article = allArticles.find((a) => a.slug === slug);
+  return article;
 };
 
 export const getCategories = unstable_cache(
