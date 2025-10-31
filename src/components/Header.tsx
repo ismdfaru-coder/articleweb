@@ -1,14 +1,18 @@
 'use client';
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import type { Category } from "@/lib/types";
 import { useState } from "react";
 import { MobileMenu } from "./MobileMenu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 export function Header({ categories }: { categories: Category[] }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
@@ -18,11 +22,18 @@ export function Header({ categories }: { categories: Category[] }) {
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-headline text-3xl font-extrabold uppercase tracking-tighter border-2 border-black px-2 py-1">Life Reality Insights</span>
           </Link>
-          <div className="flex items-center gap-4">
-             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Menu</span>
-             </Button>
+          <div className="flex items-center gap-4 md:hidden">
+             <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <MobileMenu categories={categories} />
+                </SheetContent>
+              </Sheet>
           </div>
         </div>
         
@@ -38,11 +49,6 @@ export function Header({ categories }: { categories: Category[] }) {
         </nav>
       </div>
       <Separator className="hidden md:block" />
-      <MobileMenu 
-        isOpen={isMobileMenuOpen} 
-        onClose={() => setIsMobileMenuOpen(false)}
-        categories={categories}
-      />
     </header>
   );
 }

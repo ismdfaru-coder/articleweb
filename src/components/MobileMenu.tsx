@@ -1,43 +1,29 @@
 'use client';
 import Link from 'next/link';
-import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Search, X } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type { Category } from '@/lib/types';
-import { cn } from '@/lib/utils';
 
 type MobileMenuProps = {
-  isOpen: boolean;
-  onClose: () => void;
   categories: Category[];
 };
 
-export function MobileMenu({ isOpen, onClose, categories }: MobileMenuProps) {
+export function MobileMenu({ categories }: MobileMenuProps) {
   return (
     <div
-      className={cn(
-        "fixed inset-0 z-50 h-screen w-screen bg-white p-6 transition-transform duration-300 ease-in-out",
-        isOpen ? "translate-x-0" : "translate-x-full"
-      )}
+      className="h-full w-full bg-white p-6"
     >
-      <div className="flex justify-between items-center mb-8">
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-6 w-6" />
-          <span className="sr-only">Close menu</span>
-        </Button>
-      </div>
-      
       <div className="relative mb-8">
         <Input placeholder="Search Lifehacker" className="h-12 text-lg pr-12" />
         <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
       </div>
 
-      <nav className="flex flex-col items-start gap-4 mb-8">
-        <Link href="/" className="font-headline text-xl uppercase tracking-wider text-foreground hover:text-primary" onClick={onClose}>
+      <nav className="flex flex-col items-start gap-4">
+        <Link href="/" className="font-headline text-xl uppercase tracking-wider text-foreground hover:text-primary">
           Latest
         </Link>
         {categories.map(category => (
-          <Link key={category.id} href="#" className="font-headline text-xl uppercase tracking-wider text-foreground hover:text-primary" onClick={onClose}>
+          <Link key={category.id} href="#" className="font-headline text-xl uppercase tracking-wider text-foreground hover:text-primary">
             {category.name}
           </Link>
         ))}
