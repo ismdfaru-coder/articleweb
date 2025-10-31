@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Article } from '@/lib/types';
@@ -21,7 +22,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         />
       </div>
       <div className="mt-4">
-        <Badge variant="secondary">{article.category.name}</Badge>
+        {article.category && <Badge variant="secondary">{article.category.name}</Badge>}
         <h3 className="font-headline mt-2 text-xl font-bold group-hover:text-primary">
           {article.title}
         </h3>
