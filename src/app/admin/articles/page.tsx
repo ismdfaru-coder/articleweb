@@ -23,10 +23,8 @@ export default function AdminArticlesPage() {
   const [isPending, startTransition] = useTransition();
 
   const fetchArticles = useCallback(() => {
-    console.log('Fetching articles...');
     startTransition(() => {
       getArticles().then(data => {
-        console.log('Fetched articles:', data.length);
         setArticles(data);
       });
     });
@@ -36,12 +34,9 @@ export default function AdminArticlesPage() {
     fetchArticles();
   }, [fetchArticles]);
   
-  // Re-fetch articles when the window gets focus. This ensures that
-  // if the user navigates away (e.g., to the edit page) and comes back,
-  // the data is fresh. This is the most reliable way to bypass client-side cache.
+  // Re-fetch articles when the window gets focus.
   useEffect(() => {
     const handleFocus = () => {
-      console.log('Window focused, refetching articles.');
       fetchArticles();
     }
     window.addEventListener('focus', handleFocus);
@@ -119,9 +114,6 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
     }
   }
 
-  // If a global transition is happening (e.g. fetching), but it's not this row's delete,
-  // we don't want every row to show a "deleting" state. isDeleting handles this.
-  // When the global transition finishes, we can reset our local deleting state.
   useEffect(() => {
     if (!isPending) {
       setIsDeleting(false);
