@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import * as React from 'react';
 import { getArticles } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import {
