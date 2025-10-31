@@ -59,6 +59,13 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
   const defaultValues: Partial<ArticleFormValues> = article
     ? { ...article, imageHint: article.imageHint || '' }
     : {
+      title: '',
+      slug: '',
+      excerpt: '',
+      content: '',
+      imageUrl: '',
+      imageHint: '',
+      categoryId: '',
       author: 'Admin User',
       authorAvatarUrl: 'https://picsum.photos/seed/admin/40/40',
       featured: false,
