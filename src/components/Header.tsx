@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import type { Category } from "@/lib/types";
-import { useState } from "react";
 import { MobileMenu } from "./MobileMenu";
 import {
   Sheet,
@@ -22,7 +21,7 @@ export function Header({ categories }: { categories: Category[] }) {
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-headline text-3xl font-extrabold uppercase tracking-tighter border-2 border-black px-2 py-1">Life Reality Insights</span>
           </Link>
-          <div className="flex items-center gap-4 md:hidden">
+          <div className="md:hidden">
              <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon">
