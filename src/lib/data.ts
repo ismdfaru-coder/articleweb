@@ -1,7 +1,7 @@
 
 'use server';
 
-import type { Article, Category } from './types';
+import type { Article, Category, Admin } from './types';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -11,13 +11,14 @@ const dbPath = path.join(process.cwd(), 'src', 'lib', 'db.json');
 type Db = {
   articles: Article[];
   categories: Category[];
+  admin: Admin;
 };
 
 // In-memory cache for the database
 let cache: Db | null = null;
 
 // --- Read the database file ---
-async function readDb(): Promise<Db> {
+export async function readDb(): Promise<Db> {
   // If cache exists, return it
   if (cache) {
     return cache;
@@ -29,7 +30,7 @@ async function readDb(): Promise<Db> {
     return cache;
   } catch (error) {
     // If the file doesn't exist, return a default structure and cache it
-    const defaultDb = { articles: [], categories: [] };
+    const defaultDb = { articles: [], categories: [], admin: { username: '', passwordHash: '' } };
     cache = defaultDb;
     return cache;
   }

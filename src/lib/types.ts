@@ -19,3 +19,8 @@ export type Article = {
   categoryId: string;
   category: Category;
 };
+
+export type Admin = {
+  username: string;
+  passwordHash: string;
+};
