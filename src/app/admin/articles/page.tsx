@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { getArticles } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -10,12 +11,33 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Loader2 } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { ArticleRowActions } from './ArticleRowActions';
+import { useEffect, useState, useTransition } from 'react';
 
-export default async function AdminArticlesPage() {
-  const articles = await getArticles();
+export default function AdminArticlesPage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isPending, startTransition] = useTransition();
+
+  const fetchArticles = () => {
+    startTransition(async () => {
+      const articles = await getArticles();
+      setArticles(articles);
+    });
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  // Re-fetch when the window gets focus
+  useEffect(() => {
+    const handleFocus = () => fetchArticles();
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
 
   return (
     <div>
@@ -43,15 +65,26 @@ export default async function AdminArticlesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {articles.map((article) => (
-              <ArticleRow key={article.id} article={article} />
-            ))}
+            {isPending ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center p-8">
+                  <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                </TableCell>
+              </TableRow>
+            ) : articles.length > 0 ? (
+              articles.map((article) => (
+                <ArticleRow key={article.id} article={article} />
+              ))
+            ) : (
+               <TableRow>
+                <TableCell colSpan={5} className="text-center p-8 text-muted-foreground">
+                  No articles found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
-       {articles.length === 0 && (
-         <div className="text-center p-8 text-muted-foreground">No articles found.</div>
-       )}
     </div>
   );
 }
