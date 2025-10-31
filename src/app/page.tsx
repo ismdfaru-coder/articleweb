@@ -75,6 +75,7 @@ export default async function Home() {
 }
 
 function TopStory({ article }: { article: Article }) {
+  const authorName = "Admin User";
   return (
     <div className="group relative">
       <Link href={`/articles/${article.slug}`}>
@@ -99,7 +100,7 @@ function TopStory({ article }: { article: Article }) {
           </h1>
           <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
              <UserCircle className="h-4 w-4" />
-            <span>{article.author}</span>
+            <span>{authorName}</span>
           </div>
         </div>
       </Link>

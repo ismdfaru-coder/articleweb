@@ -24,6 +24,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       day: 'numeric',
     });
 
+  const authorName = "Admin User";
+  const authorAvatar = "https://picsum.photos/seed/admin/40/40";
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header categories={categories} />
@@ -40,14 +43,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </h1>
             <div className="mt-6 flex items-center gap-4">
               <Image
-                src={article.authorAvatarUrl}
-                alt={article.author}
+                src={authorAvatar}
+                alt={authorName}
                 width={48}
                 height={48}
                 className="rounded-full"
               />
               <div>
-                <p className="font-semibold">{article.author}</p>
+                <p className="font-semibold">{authorName}</p>
                 <p className="text-sm text-muted-foreground">
                   Published on {formattedDate}
                 </p>

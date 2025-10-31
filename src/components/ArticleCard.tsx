@@ -17,6 +17,9 @@ export function ArticleCard({ article, variant = 'default' }: ArticleCardProps) 
     day: 'numeric',
   });
 
+  const authorName = "Admin User";
+  const authorAvatar = "https://picsum.photos/seed/admin/40/40";
+
   if (variant === 'subStory') {
     return (
        <Link href={`/articles/${article.slug}`} className="group block">
@@ -36,7 +39,7 @@ export function ArticleCard({ article, variant = 'default' }: ArticleCardProps) 
                </h3>
                 <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
                    <UserCircle className="h-4 w-4" />
-                   <span>{article.author}</span>
+                   <span>{authorName}</span>
                </div>
            </div>
        </Link>
@@ -62,13 +65,13 @@ export function ArticleCard({ article, variant = 'default' }: ArticleCardProps) 
                 </h3>
                  <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
                     <Image
-                        src={article.authorAvatarUrl}
-                        alt={article.author}
+                        src={authorAvatar}
+                        alt={authorName}
                         width={20}
                         height={20}
                         className="rounded-full"
                     />
-                    <span>{article.author}</span>
+                    <span>{authorName}</span>
                 </div>
             </div>
         </Link>
@@ -98,13 +101,13 @@ export function ArticleCard({ article, variant = 'default' }: ArticleCardProps) 
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>
         <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
           <Image
-            src={article.authorAvatarUrl}
-            alt={article.author}
+            src={authorAvatar}
+            alt={authorName}
             width={24}
             height={24}
             className="rounded-full"
           />
-          <span>{article.author}</span>
+          <span>{authorName}</span>
         </div>
       </div>
     </Link>
