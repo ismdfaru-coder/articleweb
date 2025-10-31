@@ -52,19 +52,17 @@ export function Header({ categories }: { categories: Category[] }) {
                  </Button>
               </div>
 
-              <div className="md:hidden">
-                 <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <Menu className="h-6 w-6" />
-                        <span className="sr-only">Menu</span>
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                      <MobileMenu categories={categories} />
-                    </SheetContent>
-                  </Sheet>
-              </div>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <MobileMenu categories={categories} />
+                </SheetContent>
+              </Sheet>
             </div>
           )}
         </div>
