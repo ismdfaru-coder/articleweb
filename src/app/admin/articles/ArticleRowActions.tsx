@@ -15,7 +15,7 @@ export function ArticleRowActions({ articleId, onDelete, isDeleting }: { article
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-haspopup="true" size="icon" variant="ghost">
+        <Button aria-haspopup="true" size="icon" variant="ghost" disabled={isDeleting}>
           <MoreHorizontal className="h-4 w-4" />
           <span className="sr-only">Toggle menu</span>
         </Button>

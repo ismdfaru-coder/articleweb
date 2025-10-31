@@ -23,7 +23,9 @@ export default function AdminArticlesPage() {
   const [isPending, startTransition] = useTransition();
 
   const fetchArticles = React.useCallback(() => {
-    getArticles().then(setArticles);
+    startTransition(() => {
+      getArticles().then(setArticles);
+    });
   }, []);
 
   useEffect(() => {
@@ -82,8 +84,11 @@ export default function AdminArticlesPage() {
           </TableBody>
         </Table>
       </div>
-       {articles.length === 0 && (
+       {articles.length === 0 && !isPending && (
          <div className="text-center p-8 text-muted-foreground">No articles found.</div>
+       )}
+       {isPending && articles.length === 0 && (
+          <div className="text-center p-8 text-muted-foreground">Loading articles...</div>
        )}
     </div>
   );
@@ -95,20 +100,20 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
     month: 'long',
     day: 'numeric',
   });
-
+  
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const handleDelete = () => {
+    setIsDeleting(true);
+    onDelete(article.id);
+  }
+
+  // If a transition is happening, but it's not this row's delete, don't show deleting state.
   useEffect(() => {
-    if (isPending) {
-        // A simple way to check if the current row is the one being deleted.
-        // In a real app with optimistic updates, this would be more complex.
-        // For now, we assume any pending transition is a delete for this row.
-        setIsDeleting(true); 
-    } else {
-        setIsDeleting(false);
+    if (!isPending) {
+      setIsDeleting(false);
     }
   }, [isPending]);
-
 
   return (
     <TableRow>
@@ -125,7 +130,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
       <TableCell>
         <ArticleRowActions 
           articleId={article.id} 
-          onDelete={() => onDelete(article.id)} 
+          onDelete={handleDelete} 
           isDeleting={isDeleting}
         />
       </TableCell>
