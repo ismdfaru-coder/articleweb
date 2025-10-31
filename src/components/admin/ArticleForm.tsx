@@ -31,6 +31,7 @@ import { Wand2 } from 'lucide-react';
 import { OptimizeContentDialog } from './OptimizeContentDialog';
 import { saveArticle } from '@/app/admin/actions';
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
 
 const formSchema = z.object({
   id: z.string().optional(),
