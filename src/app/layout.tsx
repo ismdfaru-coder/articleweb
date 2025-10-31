@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Inkwell Insights',
+  title: 'Life Reality Insights',
   description: 'A thoughtful collection of articles and essays.',
 };
 

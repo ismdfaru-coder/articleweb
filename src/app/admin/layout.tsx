@@ -38,7 +38,7 @@ export default function AdminLayout({
                  <BookText className="h-5 w-5 text-primary-foreground" />
               </div>
               <h1 className="font-headline text-lg font-bold text-sidebar-foreground">
-                Inkwell Admin
+                Life Reality Admin
               </h1>
             </div>
           </SidebarHeader>
