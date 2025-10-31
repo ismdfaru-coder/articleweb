@@ -16,9 +16,21 @@ export function useAuth() {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    // This effect now only runs once to set the initial loading state.
-    // It no longer tries to authenticate from localStorage, which was causing issues.
-    setIsLoading(false);
+    // On initial load, try to retrieve auth state from localStorage.
+    // This helps maintain the session across page reloads.
+    try {
+      const storedAuth = localStorage.getItem(AUTH_KEY);
+      if (storedAuth) {
+        const { username } = JSON.parse(storedAuth);
+        if (username) {
+            setAuthState({ isAuthenticated: true, username });
+        }
+      }
+    } catch (e) {
+      console.error("Could not access localStorage", e);
+    } finally {
+        setIsLoading(false);
+    }
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {

@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 const loginSchema = z.object({
   username: z.string().min(1, { message: 'Username is required' }),
@@ -32,6 +32,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { login, isLoading, error } = useAuth();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = React.useState(false);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -70,11 +71,23 @@ export default function LoginPage() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                {...form.register('password')}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  {...form.register('password')}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute inset-y-0 right-0 h-full px-3"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+                </Button>
+              </div>
                {form.formState.errors.password && (
                 <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
               )}
