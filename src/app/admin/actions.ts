@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { 
@@ -46,6 +46,11 @@ export async function saveArticle(formData: FormData) {
 
 export async function deleteArticle(formData: FormData) {
   const id = formData.get('id') as string;
+  if (!id) return;
+  
+  const form = new FormData();
+  form.append('id', id);
+
   await dbDeleteArticle(id);
   revalidatePath('/admin/articles');
   revalidatePath('/');
@@ -55,9 +60,8 @@ export async function createCategory(formData: FormData) {
   const name = formData.get('name') as string;
   if (name) {
     await dbSaveCategory({ name });
+    revalidateTag('categories');
     revalidatePath('/admin/categories');
-    revalidatePath('/admin/articles/new');
-    revalidatePath('/admin/articles/edit');
   }
 }
 
@@ -65,6 +69,7 @@ export async function deleteCategory(formData: FormData) {
   try {
     const id = formData.get('id') as string;
     await dbDeleteCategory(id);
+    revalidateTag('categories');
     revalidatePath('/admin/categories');
   } catch (error) {
     // This will be caught by an error boundary in a real app.

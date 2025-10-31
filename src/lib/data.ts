@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidateTag, unstable_cache } from 'next/cache';
 import type { Article, Category } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -140,9 +141,13 @@ export const getArticleBySlug = async (slug: string): Promise<Article | undefine
   return undefined;
 };
 
-export const getCategories = async (): Promise<Category[]> => {
-  return categories;
-};
+export const getCategories = unstable_cache(
+  async (): Promise<Category[]> => {
+    return categories;
+  },
+  ['categories'],
+  { tags: ['categories'] }
+);
 
 export const getCategoryById = async (id: string): Promise<Category | undefined> => {
   return categories.find((c) => c.id === id);
