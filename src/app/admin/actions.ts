@@ -9,6 +9,7 @@ import {
   deleteCategory as dbDeleteCategory
 } from '@/lib/data';
 import { optimizeContent as optimizeContentFlow, type OptimizeContentInput } from '@/ai/flows/optimize-content-for-engagement';
+import { redirect } from 'next/navigation';
 
 const articleSchema = z.object({
   id: z.string().optional(),
@@ -40,7 +41,9 @@ export async function saveArticle(formData: FormData) {
   revalidatePath('/');
   revalidatePath(`/articles/${validated.data.slug}`);
 
-  return { success: true, data: savedArticle };
+  // We are redirecting here now, as the client component will refetch data
+  // on focus, which happens after a redirect.
+  redirect('/admin/articles');
 }
 
 export async function deleteArticle(formData: FormData) {

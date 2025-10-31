@@ -87,15 +87,9 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
     });
 
     startTransition(async () => {
-      const result = await saveArticle(formData);
-      if (result.success) {
-        // Instead of router.refresh(), we push to the new page.
-        // This forces a full reload of the server component, getting fresh data.
-        router.push('/admin/articles');
-      } else {
-        console.error(result.error);
-        // Optionally, show a toast notification for the error
-      }
+      // The saveArticle action now handles the redirect.
+      // We no longer need to call router.push() here.
+      await saveArticle(formData);
     });
   };
   
