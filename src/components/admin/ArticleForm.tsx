@@ -91,8 +91,7 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
           title: `Article ${data.id ? 'updated' : 'created'}`,
           description: `${saved.title} has been successfully saved.`,
         });
-        await refreshArticles(data);
-        onSaveSuccess();
+        window.location.reload();
       } catch (error) {
         console.error("Failed to save article", error);
         toast({
