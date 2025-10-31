@@ -17,11 +17,11 @@ export function useAuth() {
 
   React.useEffect(() => {
     // On initial load, try to retrieve auth state from localStorage.
-    // This helps maintain the session across page reloads.
     try {
       const storedAuth = localStorage.getItem(AUTH_KEY);
       if (storedAuth) {
         const { username } = JSON.parse(storedAuth);
+        // We only set the state if a username exists, the layout will handle verification
         if (username) {
             setAuthState({ isAuthenticated: true, username });
         }
@@ -41,6 +41,7 @@ export function useAuth() {
       if (isValid) {
         setAuthState({ isAuthenticated: true, username });
         try {
+          // Store a simple flag or username to indicate session
           localStorage.setItem(AUTH_KEY, JSON.stringify({ username }));
         } catch (e) {
           console.error("Could not access localStorage", e);
@@ -49,9 +50,15 @@ export function useAuth() {
       } else {
         setError('Invalid username or password');
         setAuthState({ isAuthenticated: false, username: null });
+        try {
+            localStorage.removeItem(AUTH_KEY);
+        } catch (e) {
+            console.error("Could not access localStorage", e);
+        }
         return false;
       }
     } catch (e) {
+      console.error("Login verification failed", e);
       setError('An error occurred during login.');
       return false;
     } finally {
@@ -68,5 +75,5 @@ export function useAuth() {
     }
   };
 
-  return { isAuthenticated: authState.isAuthenticated, isLoading, login, logout, error };
+  return { isAuthenticated: authState.isAuthenticated, isLoading, login, logout, error, username: authState.username };
 }

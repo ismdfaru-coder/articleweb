@@ -21,7 +21,9 @@ export async function verifyAdminCredentials({
   }
   
   const db = await readDb();
-  if (!db.admin) {
+  // Ensure db.admin exists and has the required properties
+  if (!db || !db.admin || !db.admin.username || !db.admin.passwordHash) {
+    console.error("Admin credentials not found or incomplete in db.json");
     return false;
   }
 
