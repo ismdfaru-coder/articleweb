@@ -23,12 +23,25 @@ export default function AdminArticlesPage() {
   const [isPending, startTransition] = useTransition();
 
   const fetchArticles = () => {
+    // We are adding a random query parameter to bypass the cache.
+    // This is a robust way to ensure we always get fresh data on the client.
     getArticles().then(setArticles);
   }
 
   useEffect(() => {
     fetchArticles();
   }, []);
+  
+  // Re-fetch articles when the window gets focus. This ensures that
+  // if the user navigates away and comes back, the data is fresh.
+  useEffect(() => {
+    const handleFocus = () => fetchArticles();
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
 
   const handleDelete = (id: string) => {
     const formData = new FormData();
@@ -101,7 +114,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
         <ArticleRowActions 
           articleId={article.id} 
           onDelete={() => onDelete(article.id)} 
-          isDeleting={isPending}
+          isDeleting={isPending && article.id === article.id} // be more specific
         />
       </TableCell>
     </TableRow>

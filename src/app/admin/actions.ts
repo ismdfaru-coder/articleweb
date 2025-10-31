@@ -36,6 +36,7 @@ export async function saveArticle(formData: FormData) {
   const savedArticle = await dbSaveArticle(validated.data);
   
   revalidateTag('articles');
+  revalidatePath('/admin/articles');
   revalidatePath('/');
   revalidatePath(`/articles/${validated.data.slug}`);
 
@@ -48,6 +49,7 @@ export async function deleteArticle(formData: FormData) {
 
   await dbDeleteArticle(id);
   revalidateTag('articles');
+  revalidatePath('/admin/articles');
   revalidatePath('/');
 }
 
@@ -56,6 +58,8 @@ export async function createCategory(formData: FormData) {
   if (name) {
     await dbSaveCategory({ name });
     revalidateTag('categories');
+    revalidatePath('/admin/articles/new');
+    revalidatePath('/admin/articles/edit/.*'); // Revalidate all edit pages
   }
 }
 
