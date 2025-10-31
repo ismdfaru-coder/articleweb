@@ -69,6 +69,16 @@ export function ArticleCard({ article, variant = 'default' }: ArticleCardProps) 
           {article.title}
         </h3>
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{article.excerpt}</p>
+        <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <Image
+            src={article.authorAvatarUrl}
+            alt={article.author}
+            width={24}
+            height={24}
+            className="rounded-full"
+          />
+          <span>{article.author}</span>
+        </div>
       </div>
     </Link>
   );
