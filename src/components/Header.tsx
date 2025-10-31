@@ -39,16 +39,6 @@ export function Header({ categories }: { categories: Category[] }) {
           ) : (
             <div className="flex items-center gap-2">
               <div className="hidden md:flex items-center gap-2">
-                 <Button variant="ghost" size="icon" asChild>
-                    <Link href="#" target="_blank">
-                       <Instagram className="h-5 w-5" />
-                    </Link>
-                 </Button>
-                 <Button variant="ghost" size="icon" asChild>
-                    <Link href="#" target="_blank">
-                       <Facebook className="h-5 w-5" />
-                    </Link>
-                 </Button>
                  <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)}>
                     <Search className="h-6 w-6" />
                  </Button>
