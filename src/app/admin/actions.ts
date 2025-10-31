@@ -17,6 +17,17 @@ export async function getArticles() {
 }
 
 export async function saveArticle(article: Omit<Article, 'id' | 'category' | 'createdAt'> & { id?: string }): Promise<Article> {
+  
+  // Auto-format content if it doesn't seem to contain HTML
+  if (article.content && !/<[a-z][\s\S]*>/i.test(article.content)) {
+    article.content = article.content
+      .split(/\n\s*\n/) // Split by one or more blank lines
+      .map(paragraph => paragraph.trim())
+      .filter(paragraph => paragraph.length > 0)
+      .map(paragraph => `<p>${paragraph}</p>`)
+      .join('\n');
+  }
+
   const savedArticle = await dbSaveArticle(article);
   revalidateTag('articles');
   return savedArticle;

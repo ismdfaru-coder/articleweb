@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useArticles } from '@/hooks/use-articles';
 
 import type { Article, Category } from '@/lib/types';
@@ -29,6 +29,8 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Wand2 } from 'lucide-react';
 import { OptimizeContentDialog } from './OptimizeContentDialog';
+import { saveArticle } from '@/app/admin/actions';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -55,7 +57,9 @@ type ArticleFormProps = {
 
 export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: ArticleFormProps) {
   const [isAiDialogOpen, setAiDialogOpen] = useState(false);
-  const { saveArticle, isLoading } = useArticles();
+  const { saveArticle: refreshArticles } = useArticles();
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
 
   const defaultValues: Partial<ArticleFormValues> = article
     ? { ...article, imageHint: article.imageHint || '' }
@@ -78,9 +82,25 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
     mode: 'onChange',
   });
 
-  const onSubmit = async (data: ArticleFormValues) => {
-    await saveArticle(data);
-    onSaveSuccess();
+  const onSubmit = (data: ArticleFormValues) => {
+    startTransition(async () => {
+      try {
+        const saved = await saveArticle(data);
+        toast({
+          title: `Article ${data.id ? 'updated' : 'created'}`,
+          description: `${saved.title} has been successfully saved.`,
+        });
+        await refreshArticles(data);
+        onSaveSuccess();
+      } catch (error) {
+        console.error("Failed to save article", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to save the article.",
+        });
+      }
+    });
   };
   
   const generateSlug = () => {
@@ -95,6 +115,7 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
   };
 
   const currentContent = form.watch('content');
+  const [preview, setPreview] = useState(false);
 
   return (
     <>
@@ -123,17 +144,25 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
                 <FormItem>
                    <div className="flex justify-between items-center">
                     <FormLabel>Content</FormLabel>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setAiDialogOpen(true)}>
-                      <Wand2 className="mr-2 h-4 w-4" />
-                      Optimize with AI
-                    </Button>
+                    <div className="flex items-center gap-2">
+                       <Button type="button" variant="ghost" size="sm" onClick={() => setAiDialogOpen(true)}>
+                        <Wand2 className="mr-2 h-4 w-4" />
+                        Optimize with AI
+                      </Button>
+                      <Switch checked={preview} onCheckedChange={setPreview} id="preview-switch" />
+                      <Label htmlFor="preview-switch">Preview</Label>
+                    </div>
                   </div>
                   <FormControl>
-                    <Textarea
-                      placeholder="Write your article here... Supports HTML."
-                      className="min-h-[400px]"
-                      {...field}
-                    />
+                    {preview ? (
+                      <div className="prose dark:prose-invert max-w-none rounded-md border p-4 min-h-[400px]" dangerouslySetInnerHTML={{ __html: field.value }} />
+                    ) : (
+                      <Textarea
+                        placeholder="Write your article here... Supports HTML, or paste raw text and save to auto-format."
+                        className="min-h-[400px]"
+                        {...field}
+                      />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -237,8 +266,8 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Article'}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? 'Saving...' : 'Save Article'}
           </Button>
         </div>
       </form>
