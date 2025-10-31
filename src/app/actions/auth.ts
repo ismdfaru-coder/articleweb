@@ -1,13 +1,14 @@
+
 'use server';
 
-import { createHash } from 'crypto';
 import { readDb } from '@/lib/data';
 
-function hashPassword(password: string): string {
-  const sha256 = createHash('sha256');
-  sha256.update(password);
-  return sha256.digest('hex');
-}
+// This function is no longer needed for plain text comparison.
+// function hashPassword(password: string): string {
+//   const sha256 = createHash('sha256');
+//   sha256.update(password);
+//   return sha256.digest('hex');
+// }
 
 export async function verifyAdminCredentials({
   username,
@@ -22,17 +23,16 @@ export async function verifyAdminCredentials({
   
   const db = await readDb();
   // Ensure db and db.admin exist and have the required properties
-  if (!db || !db.admin || !db.admin.username || !db.admin.passwordHash) {
+  if (!db || !db.admin || !db.admin.username || !db.admin.password) {
     console.error("Admin credentials not found or incomplete in db.json");
     return false;
   }
 
-  const { username: storedUsername, passwordHash: storedPasswordHash } = db.admin;
+  const { username: storedUsername, password: storedPassword } = db.admin;
 
-  const inputPasswordHash = hashPassword(password);
-  
+  // Direct comparison instead of hashing
   const isUsernameMatch = username === storedUsername;
-  const isPasswordMatch = inputPasswordHash === storedPasswordHash;
+  const isPasswordMatch = password === storedPassword;
 
   return isUsernameMatch && isPasswordMatch;
 }

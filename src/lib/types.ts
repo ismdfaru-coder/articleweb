@@ -22,5 +22,6 @@ export type Article = {
 
 export type Admin = {
   username: string;
-  passwordHash: string;
+  password?: string; // Kept optional for backward compatibility if needed, but we will store it now.
+  passwordHash?: string; // Keep for potential future use, but we will use password now.
 };
