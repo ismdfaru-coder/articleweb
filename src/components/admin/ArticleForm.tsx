@@ -87,7 +87,13 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
     });
 
     startTransition(async () => {
-      await saveArticle(formData);
+      const result = await saveArticle(formData);
+      if (result.success) {
+        router.push('/admin/articles');
+      } else {
+        // In a real app, you would handle the error, e.g., show a toast.
+        console.error(result.error);
+      }
     });
   };
   

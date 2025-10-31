@@ -32,16 +32,16 @@ export async function saveArticle(formData: FormData) {
   if (!validated.success) {
     console.error(validated.error.flatten().fieldErrors);
     // In a real app, you'd return these errors to the form.
-    return { error: 'Invalid data' };
+    return { success: false, error: 'Invalid data' };
   }
 
-  await dbSaveArticle(validated.data);
+  const savedArticle = await dbSaveArticle(validated.data);
   
   revalidatePath('/admin/articles');
   revalidatePath('/');
   revalidatePath(`/articles/${validated.data.slug}`);
 
-  redirect('/admin/articles');
+  return { success: true, data: savedArticle };
 }
 
 export async function deleteArticle(formData: FormData) {
@@ -62,6 +62,8 @@ export async function createCategory(formData: FormData) {
     await dbSaveCategory({ name });
     revalidateTag('categories');
     revalidatePath('/admin/categories');
+    revalidatePath('/admin/articles/new');
+    revalidatePath('/admin/articles/edit/*');
   }
 }
 
