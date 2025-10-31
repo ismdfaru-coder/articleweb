@@ -15,17 +15,19 @@ type ArticlePageProps = {
 export default function ArticlePage({ params }: ArticlePageProps) {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
-  const { slug } = params;
-
+  
   useEffect(() => {
-    getArticleBySlug(slug).then(articleData => {
-      if (!articleData) {
-        notFound();
-      }
-      setArticle(articleData);
-      setLoading(false);
-    });
-  }, [slug]);
+    const slug = params.slug;
+    if (slug) {
+      getArticleBySlug(slug).then(articleData => {
+        if (!articleData) {
+          notFound();
+        }
+        setArticle(articleData);
+        setLoading(false);
+      });
+    }
+  }, [params.slug]);
   
   const formattedDate = article ? new Date(article.createdAt).toLocaleDateString('en-US', {
       year: 'numeric',
