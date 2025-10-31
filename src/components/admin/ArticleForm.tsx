@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 
 import type { Article, Category } from '@/lib/types';
 import { saveArticle } from '@/app/admin/actions';
@@ -55,6 +55,7 @@ type ArticleFormProps = {
 export function ArticleForm({ article, categories }: ArticleFormProps) {
   const router = useRouter();
   const [isAiDialogOpen, setAiDialogOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const defaultValues: Partial<ArticleFormValues> = article
     ? { ...article, imageHint: article.imageHint || '' }
@@ -63,7 +64,7 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
       slug: '',
       excerpt: '',
       content: '',
-      imageUrl: '',
+      imageUrl: 'https://picsum.photos/seed/1/1200/800',
       imageHint: '',
       categoryId: '',
       author: 'Admin User',
@@ -77,6 +78,19 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
     mode: 'onChange',
   });
 
+  const onSubmit = (data: ArticleFormValues) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+
+    startTransition(async () => {
+      await saveArticle(formData);
+    });
+  };
+  
   const generateSlug = () => {
     const title = form.getValues('title');
     if (title) {
@@ -93,9 +107,7 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
   return (
     <>
     <Form {...form}>
-      <form action={saveArticle} className="space-y-8">
-        {article?.id && <input type="hidden" name="id" value={article.id} />}
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-8">
             <FormField
@@ -221,17 +233,11 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      name={field.name}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-
-            <input type="hidden" {...form.register('imageHint')} />
-            <input type="hidden" {...form.register('author')} />
-            <input type="hidden" {...form.register('authorAvatarUrl')} />
-
           </div>
         </div>
 
@@ -239,8 +245,8 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
           <Button type="button" variant="outline" onClick={() => router.push('/admin/articles')}>
             Cancel
           </Button>
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? 'Saving...' : 'Save Article'}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? 'Saving...' : 'Save Article'}
           </Button>
         </div>
       </form>
