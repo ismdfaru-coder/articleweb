@@ -25,21 +25,10 @@ import type { Article } from '@/lib/types';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [formattedDates, setFormattedDates] = useState<{[key: string]: string}>({});
-
+  
   useEffect(() => {
     getArticles().then(setArticles);
   }, []);
-
-  useEffect(() => {
-    if (articles.length > 0) {
-      const dates = articles.reduce((acc, article) => {
-        acc[article.id] = new Date(article.createdAt).toLocaleDateString();
-        return acc;
-      }, {} as {[key: string]: string});
-      setFormattedDates(dates);
-    }
-  }, [articles]);
 
   return (
     <div>
@@ -68,41 +57,7 @@ export default function AdminArticlesPage() {
           </TableHeader>
           <TableBody>
             {articles.map((article) => (
-              <TableRow key={article.id}>
-                <TableCell className="font-medium">{article.title}</TableCell>
-                <TableCell>{article.category.name}</TableCell>
-                <TableCell>
-                  <Badge variant={article.featured ? 'default' : 'secondary'}>
-                    {article.featured ? 'Featured' : 'Published'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {formattedDates[article.id] || '...'}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button aria-haspopup="true" size="icon" variant="ghost">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/admin/articles/edit/${article.id}`}>
-                           Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <form action={deleteArticle}>
-                         <input type="hidden" name="id" value={article.id} />
-                         <button type="submit" className="w-full">
-                           <DropdownMenuItem>Delete</DropdownMenuItem>
-                         </button>
-                      </form>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+              <ArticleRow key={article.id} article={article} />
             ))}
           </TableBody>
         </Table>
@@ -112,4 +67,52 @@ export default function AdminArticlesPage() {
        )}
     </div>
   );
+}
+
+function ArticleRow({ article }: { article: Article }) {
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    if (article.createdAt) {
+      setFormattedDate(new Date(article.createdAt).toLocaleDateString());
+    }
+  }, [article.createdAt]);
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">{article.title}</TableCell>
+      <TableCell>{article.category.name}</TableCell>
+      <TableCell>
+        <Badge variant={article.featured ? 'default' : 'secondary'}>
+          {article.featured ? 'Featured' : 'Published'}
+        </Badge>
+      </TableCell>
+      <TableCell>
+        {formattedDate ? formattedDate : <div className="h-4 bg-muted w-24 rounded-md animate-pulse" />}
+      </TableCell>
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button aria-haspopup="true" size="icon" variant="ghost">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/articles/edit/${article.id}`}>
+                 Edit
+              </Link>
+            </DropdownMenuItem>
+            <form action={deleteArticle}>
+               <input type="hidden" name="id" value={article.id} />
+               <button type="submit" className="w-full">
+                 <DropdownMenuItem>Delete</DropdownMenuItem>
+               </button>
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+  )
 }

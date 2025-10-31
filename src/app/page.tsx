@@ -61,11 +61,13 @@ function FeaturedArticle({ article }: { article: Article }) {
   const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
-    setFormattedDate(new Date(article.createdAt).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }));
+    if (article.createdAt) {
+      setFormattedDate(new Date(article.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }));
+    }
   }, [article.createdAt]);
 
   return (
@@ -103,7 +105,7 @@ function FeaturedArticle({ article }: { article: Article }) {
                   <p className="text-sm text-muted-foreground">
                     {formattedDate}
                   </p>
-                ) : <div className="h-4 bg-muted w-24 rounded-md animate-pulse mt-1" />
+                ) : <div className="h-5 bg-muted w-24 rounded-md animate-pulse mt-1" />
                 }
               </div>
             </div>

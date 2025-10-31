@@ -76,7 +76,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
                   <p className="text-sm text-muted-foreground">
                     Published on {formattedDate}
                   </p>
-                ) : <div className="h-4 bg-muted w-32 rounded-md animate-pulse mt-1" />}
+                ) : <div className="h-5 bg-muted w-32 rounded-md animate-pulse mt-1" />}
               </div>
             </div>
           </header>
