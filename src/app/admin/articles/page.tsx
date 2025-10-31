@@ -12,32 +12,33 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { deleteArticle } from '../actions';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, MoreHorizontal } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
 import { useState, useEffect, useTransition } from 'react';
 import type { Article } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   useEffect(() => {
     getArticles().then(setArticles);
   }, []);
-
-  const handleDeleteArticle = async (id: string) => {
+  
+  const handleDeleteArticle = (id: string) => {
     const formData = new FormData();
     formData.append('id', id);
-    
+
     startTransition(async () => {
       await deleteArticle(formData);
-      // Refetch articles after deletion
+      // Re-fetch articles after deletion
       const updatedArticles = await getArticles();
       setArticles(updatedArticles);
     });
@@ -55,7 +56,7 @@ export default function AdminArticlesPage() {
         </Button>
       </div>
 
-      <div className="mt-6 rounded-lg border shadow-sm">
+      <div className="mt-6 rounded-lg border shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -84,10 +85,12 @@ export default function AdminArticlesPage() {
 
 function ArticleRow({ article, onDelete, isPending }: { article: Article, onDelete: (id: string) => void, isPending: boolean }) {
   const [isClient, setIsClient] = useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
-
+  
   const formattedDate = isClient ? new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -98,7 +101,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
   return (
     <TableRow>
       <TableCell className="font-medium">{article.title}</TableCell>
-      <TableCell>{article.category.name}</TableCell>
+      <TableCell>{article.category?.name || 'N/A'}</TableCell>
       <TableCell>
         <Badge variant={article.featured ? 'default' : 'secondary'}>
           {article.featured ? 'Featured' : 'Published'}
@@ -108,6 +111,9 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
         {isClient ? formattedDate : <div className="h-5 bg-muted w-24 rounded-md animate-pulse" /> }
       </TableCell>
       <TableCell>
+         <form ref={formRef} action={() => onDelete(article.id)} className="hidden">
+            <input type="hidden" name="id" value={article.id} />
+        </form>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button aria-haspopup="true" size="icon" variant="ghost">
@@ -121,7 +127,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
                  Edit
               </Link>
             </DropdownMenuItem>
-             <DropdownMenuItem onClick={() => onDelete(article.id)} disabled={isPending} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+             <DropdownMenuItem onClick={() => formRef.current?.requestSubmit()} disabled={isPending} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                 {isPending ? 'Deleting...' : 'Delete'}
              </DropdownMenuItem>
           </DropdownMenuContent>
