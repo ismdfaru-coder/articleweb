@@ -125,6 +125,10 @@
         "slug": "personal-growth"
       }
     }
-  ]
+  ],
+  "admin": {
+    "username": "ismdfaru",
+    "passwordHash": "201382b6833135084a9e4f527c8b4562547e704987a07c65538f595a8220f18d"
+  }
 }
     

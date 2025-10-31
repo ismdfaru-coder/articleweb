@@ -8,7 +8,7 @@ export function Footer() {
           &copy; {new Date().getFullYear()} Life Reality Insights. All Rights Reserved.
         </p>
         <div className="text-sm text-muted-foreground">
-          <Link href="/admin" className="hover:text-foreground">
+          <Link href="/login" className="hover:text-foreground">
             Admin
           </Link>
         </div>

@@ -1,7 +1,8 @@
 'use client';
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { BookText, LayoutGrid, Settings, Tag } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import * as React from 'react';
+import { BookText, LayoutGrid, Settings, Tag, LogOut } from "lucide-react";
 
 import {
   SidebarProvider,
@@ -16,6 +17,7 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function AdminLayout({
   children,
@@ -23,6 +25,28 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { isAuthenticated, isLoading, logout } = useAuth();
+
+  React.useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   const isActive = (path: string) => {
     return pathname === path || (path !== '/admin' && pathname.startsWith(path));
@@ -72,6 +96,12 @@ export default function AdminLayout({
           </SidebarContent>
           <SidebarFooter>
              <SidebarMenu>
+               <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout}>
+                  <LogOut />
+                  <span>Logout</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton>
                   <Avatar className="h-8 w-8">
