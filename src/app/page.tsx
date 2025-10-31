@@ -1,7 +1,5 @@
-'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import { getArticles } from '@/lib/data';
 import type { Article } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -9,12 +7,8 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ArticleCard } from '@/components/ArticleCard';
 
-export default function Home() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  
-  useEffect(() => {
-    getArticles().then(setArticles);
-  }, []);
+export default async function Home() {
+  const articles = await getArticles();
 
   const featuredArticle = articles.find((a) => a.featured) || articles[0];
   const recentArticles = articles.filter((a) => a.id !== featuredArticle?.id).slice(0, 6);
@@ -24,7 +18,7 @@ export default function Home() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
-          <div className="container mx-auto px-4 py-8 text-center">Loading articles...</div>
+          <div className="container mx-auto px-4 py-8 text-center">No articles found.</div>
         </main>
         <Footer />
       </div>
@@ -56,16 +50,11 @@ export default function Home() {
 }
 
 function FeaturedArticle({ article }: { article: Article }) {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const formattedDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
+  const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }) : '';
+  });
 
   return (
     <section>
@@ -78,6 +67,7 @@ function FeaturedArticle({ article }: { article: Article }) {
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               data-ai-hint={article.imageHint}
+              priority
             />
           </div>
           <div className="mt-4 flex flex-col justify-center md:mt-0">
@@ -100,12 +90,9 @@ function FeaturedArticle({ article }: { article: Article }) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                {isClient ? (
-                  <p className="text-sm text-muted-foreground">
-                    {formattedDate}
-                  </p>
-                ) : <div className="h-5 bg-muted w-24 rounded-md animate-pulse mt-1" />
-                }
+                <p className="text-sm text-muted-foreground">
+                  {formattedDate}
+                </p>
               </div>
             </div>
           </div>
