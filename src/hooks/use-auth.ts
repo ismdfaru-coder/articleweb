@@ -69,6 +69,8 @@ export function useAuth() {
     setAuthState({ isAuthenticated: false, username: null });
     try {
       localStorage.removeItem(AUTH_KEY);
+      // Also reload to ensure all state is cleared
+      window.location.href = '/login';
     } catch (e) {
       console.error("Could not access localStorage", e);
     }
