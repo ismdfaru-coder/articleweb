@@ -27,7 +27,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
         setLoading(false);
       });
     }
-  }, [params.slug]);
+  }, [params]);
   
   const formattedDate = article ? new Date(article.createdAt).toLocaleDateString('en-US', {
       year: 'numeric',
