@@ -20,11 +20,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { use, startTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import type { Article } from '@/lib/types';
 
 export default function AdminArticlesPage() {
-  const articles = use(getArticles());
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    getArticles().then(setArticles);
+  }, []);
+
+  const handleDeleteArticle = async (id: string) => {
+    const formData = new FormData();
+    formData.append('id', id);
+    
+    startTransition(async () => {
+      await deleteArticle(formData);
+      // Refetch articles after deletion
+      const updatedArticles = await getArticles();
+      setArticles(updatedArticles);
+    });
+  };
 
   return (
     <div>
@@ -53,7 +70,7 @@ export default function AdminArticlesPage() {
           </TableHeader>
           <TableBody>
             {articles.map((article) => (
-              <ArticleRow key={article.id} article={article} />
+              <ArticleRow key={article.id} article={article} onDelete={handleDeleteArticle} isPending={isPending} />
             ))}
           </TableBody>
         </Table>
@@ -65,20 +82,18 @@ export default function AdminArticlesPage() {
   );
 }
 
-function ArticleRow({ article }: { article: Article }) {
-  const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
+function ArticleRow({ article, onDelete, isPending }: { article: Article, onDelete: (id: string) => void, isPending: boolean }) {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const formattedDate = isClient ? new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  });
+  }) : '';
 
-  const handleDelete = () => {
-    const formData = new FormData();
-    formData.append('id', article.id);
-    startTransition(() => {
-      deleteArticle(formData);
-    });
-  }
 
   return (
     <TableRow>
@@ -90,7 +105,7 @@ function ArticleRow({ article }: { article: Article }) {
         </Badge>
       </TableCell>
       <TableCell>
-        {formattedDate}
+        {isClient ? formattedDate : <div className="h-5 bg-muted w-24 rounded-md animate-pulse" /> }
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -106,8 +121,8 @@ function ArticleRow({ article }: { article: Article }) {
                  Edit
               </Link>
             </DropdownMenuItem>
-             <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive focus:bg-destructive/10">
-                Delete
+             <DropdownMenuItem onClick={() => onDelete(article.id)} disabled={isPending} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                {isPending ? 'Deleting...' : 'Delete'}
              </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
