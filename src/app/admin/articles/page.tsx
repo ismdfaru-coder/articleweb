@@ -1,6 +1,4 @@
-'use client';
 import Link from 'next/link';
-import * as React from 'react';
 import { getArticles } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,49 +10,12 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { deleteArticle } from '../actions';
 import { PlusCircle } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { ArticleRowActions } from './ArticleRowActions';
-import { useEffect, useState, useTransition, useCallback } from 'react';
 
-export default function AdminArticlesPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isPending, startTransition] = useTransition();
-
-  const fetchArticles = useCallback(() => {
-    startTransition(() => {
-      getArticles().then(data => {
-        setArticles(data);
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    fetchArticles();
-  }, [fetchArticles]);
-  
-  // Re-fetch articles when the window gets focus.
-  useEffect(() => {
-    const handleFocus = () => {
-      fetchArticles();
-    }
-    window.addEventListener('focus', handleFocus);
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, [fetchArticles]);
-
-
-  const handleDelete = (id: string) => {
-    const formData = new FormData();
-    formData.append('id', id);
-    startTransition(async () => {
-      await deleteArticle(formData);
-      // After the action completes, fetch articles again to update the list.
-      fetchArticles();
-    });
-  }
+export default async function AdminArticlesPage() {
+  const articles = await getArticles();
 
   return (
     <div>
@@ -83,43 +44,25 @@ export default function AdminArticlesPage() {
           </TableHeader>
           <TableBody>
             {articles.map((article) => (
-              <ArticleRow key={article.id} article={article} onDelete={handleDelete} isPending={isPending}/>
+              <ArticleRow key={article.id} article={article} />
             ))}
           </TableBody>
         </Table>
       </div>
-       {articles.length === 0 && !isPending && (
+       {articles.length === 0 && (
          <div className="text-center p-8 text-muted-foreground">No articles found.</div>
-       )}
-       {isPending && articles.length === 0 && (
-          <div className="text-center p-8 text-muted-foreground">Loading articles...</div>
        )}
     </div>
   );
 }
 
-function ArticleRow({ article, onDelete, isPending }: { article: Article, onDelete: (id: string) => void, isPending: boolean }) {
+function ArticleRow({ article }: { article: Article }) {
   const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
   
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this article?')) {
-      setIsDeleting(true);
-      onDelete(article.id);
-    }
-  }
-
-  useEffect(() => {
-    if (!isPending) {
-      setIsDeleting(false);
-    }
-  }, [isPending]);
-
   return (
     <TableRow>
       <TableCell className="font-medium">{article.title}</TableCell>
@@ -135,8 +78,6 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
       <TableCell>
         <ArticleRowActions 
           articleId={article.id} 
-          onDelete={handleDelete} 
-          isDeleting={isDeleting}
         />
       </TableCell>
     </TableRow>

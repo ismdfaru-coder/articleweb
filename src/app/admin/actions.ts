@@ -25,6 +25,15 @@ const articleSchema = z.object({
   featured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
 });
 
+function formatContent(content: string): string {
+  // Split by one or more newlines, filter out empty lines, and wrap in <p> tags.
+  return content
+    .split(/\n\s*\n/)
+    .filter(p => p.trim())
+    .map(p => `<p>${p.trim()}</p>`)
+    .join('\n');
+}
+
 export async function saveArticle(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
   const validated = articleSchema.safeParse(rawData);
@@ -34,7 +43,13 @@ export async function saveArticle(formData: FormData) {
     return { success: false, error: 'Invalid data' };
   }
 
-  const savedArticle = await dbSaveArticle(validated.data);
+  const dataToSave = {
+    ...validated.data,
+    content: formatContent(validated.data.content)
+  };
+
+
+  const savedArticle = await dbSaveArticle(dataToSave);
   
   revalidateTag('articles');
   revalidatePath('/admin/articles');
@@ -59,6 +74,7 @@ export async function createCategory(formData: FormData) {
   if (name) {
     await dbSaveCategory({ name });
     revalidateTag('categories');
+    revalidatePath('/admin/categories');
     revalidatePath('/admin/articles/new');
     revalidatePath('/admin/articles/edit/.*'); // Revalidate all edit pages
   }
