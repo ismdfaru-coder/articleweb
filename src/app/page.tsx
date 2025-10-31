@@ -1,11 +1,9 @@
-
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-
 import { getArticles } from '@/lib/data';
-import { Article } from '@/lib/types';
+import type { Article } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';

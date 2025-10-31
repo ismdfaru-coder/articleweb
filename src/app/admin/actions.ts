@@ -41,8 +41,6 @@ export async function saveArticle(formData: FormData) {
   revalidatePath('/');
   revalidatePath(`/articles/${validated.data.slug}`);
 
-  // We are redirecting here now, as the client component will refetch data
-  // on focus, which happens after a redirect.
   redirect('/admin/articles');
 }
 

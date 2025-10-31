@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import type { Article } from '@/lib/types';
 
 type ArticlePageProps = {
@@ -44,7 +44,6 @@ export default function ArticlePage({ params }: ArticlePageProps) {
       );
   }
 
-  // This should not happen if loading is handled correctly, but it's a good guard.
   if (!article) {
     return notFound();
   }

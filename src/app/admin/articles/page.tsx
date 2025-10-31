@@ -22,15 +22,13 @@ export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  const fetchArticles = () => {
-    // We are adding a random query parameter to bypass the cache.
-    // This is a robust way to ensure we always get fresh data on the client.
+  const fetchArticles = React.useCallback(() => {
     getArticles().then(setArticles);
-  }
+  }, []);
 
   useEffect(() => {
     fetchArticles();
-  }, []);
+  }, [fetchArticles]);
   
   // Re-fetch articles when the window gets focus. This ensures that
   // if the user navigates away and comes back, the data is fresh.
@@ -40,7 +38,7 @@ export default function AdminArticlesPage() {
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
-  }, []);
+  }, [fetchArticles]);
 
 
   const handleDelete = (id: string) => {
@@ -98,9 +96,19 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
     day: 'numeric',
   });
 
-  // A simple way to check if the current row is the one being deleted.
-  // In a real app with optimistic updates, this would be more complex.
-  const isDeleting = isPending; 
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (isPending) {
+        // A simple way to check if the current row is the one being deleted.
+        // In a real app with optimistic updates, this would be more complex.
+        // For now, we assume any pending transition is a delete for this row.
+        setIsDeleting(true); 
+    } else {
+        setIsDeleting(false);
+    }
+  }, [isPending]);
+
 
   return (
     <TableRow>
