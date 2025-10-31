@@ -58,7 +58,7 @@ type ArticleFormProps = {
 
 export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: ArticleFormProps) {
   const [isAiDialogOpen, setAiDialogOpen] = useState(false);
-  const { saveArticle: refreshArticles } = useArticles();
+  const { fetchArticles } = useArticles();
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
@@ -91,7 +91,8 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
           title: `Article ${data.id ? 'updated' : 'created'}`,
           description: `${saved.title} has been successfully saved.`,
         });
-        window.location.reload();
+        await fetchArticles(); // Refresh the articles list
+        onSaveSuccess(); // Close the sheet
       } catch (error) {
         console.error("Failed to save article", error);
         toast({

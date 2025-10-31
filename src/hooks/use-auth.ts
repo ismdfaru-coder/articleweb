@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { verifyAdminCredentials } from '@/app/actions/auth';
+import { useRouter } from 'next/navigation';
 
 const AUTH_KEY = 'life-reality-auth';
 
@@ -14,15 +15,13 @@ export function useAuth() {
   const [authState, setAuthState] = React.useState<AuthState>({ isAuthenticated: false, username: null });
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const router = useRouter();
 
   React.useEffect(() => {
     try {
       const storedAuth = localStorage.getItem(AUTH_KEY);
       if (storedAuth) {
-        const { username } = JSON.parse(storedAuth);
-        if (username) {
-            setAuthState({ isAuthenticated: true, username });
-        }
+        setAuthState(JSON.parse(storedAuth));
       }
     } catch (e) {
       console.error("Could not access localStorage", e);
@@ -38,9 +37,10 @@ export function useAuth() {
       const isValid = await verifyAdminCredentials({ username, password });
       
       if (isValid) {
-        setAuthState({ isAuthenticated: true, username });
+        const newAuthState = { isAuthenticated: true, username };
+        setAuthState(newAuthState);
         try {
-          localStorage.setItem(AUTH_KEY, JSON.stringify({ username, isAuthenticated: true }));
+          localStorage.setItem(AUTH_KEY, JSON.stringify(newAuthState));
         } catch (e) {
           console.error("Could not access localStorage", e);
         }
@@ -69,8 +69,8 @@ export function useAuth() {
     setAuthState({ isAuthenticated: false, username: null });
     try {
       localStorage.removeItem(AUTH_KEY);
-      // Also reload to ensure all state is cleared
-      window.location.href = '/login';
+      // Use router for fast client-side navigation
+      router.push('/login');
     } catch (e) {
       console.error("Could not access localStorage", e);
     }
