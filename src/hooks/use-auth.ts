@@ -16,26 +16,9 @@ export function useAuth() {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const checkAuth = async () => {
-      setIsLoading(true);
-      try {
-        const storedAuth = localStorage.getItem(AUTH_KEY);
-        if (storedAuth) {
-          const { username } = JSON.parse(storedAuth);
-          // We don't have the password, but we can re-validate the username conceptually
-          // For this simple example, we'll trust the localStorage entry if it exists.
-          // In a real app, this would involve a session token checked against a server.
-          setAuthState({ isAuthenticated: true, username });
-        } else {
-          setAuthState({isAuthenticated: false, username: null });
-        }
-      } catch (e) {
-        console.error("Could not access localStorage", e);
-        setAuthState({isAuthenticated: false, username: null });
-      }
-      setIsLoading(false);
-    };
-    checkAuth();
+    // This effect now only runs once to set the initial loading state.
+    // It no longer tries to authenticate from localStorage, which was causing issues.
+    setIsLoading(false);
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
@@ -45,7 +28,11 @@ export function useAuth() {
       const isValid = await verifyAdminCredentials({ username, password });
       if (isValid) {
         setAuthState({ isAuthenticated: true, username });
-        localStorage.setItem(AUTH_KEY, JSON.stringify({ username }));
+        try {
+          localStorage.setItem(AUTH_KEY, JSON.stringify({ username }));
+        } catch (e) {
+          console.error("Could not access localStorage", e);
+        }
         return true;
       } else {
         setError('Invalid username or password');
