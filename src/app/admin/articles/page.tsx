@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import * as React from 'react';
 import { getArticles } from '@/lib/data';
@@ -12,19 +13,31 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { deleteArticle } from '../actions';
-import { PlusCircle, MoreHorizontal } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { PlusCircle } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { ArticleRowActions } from './ArticleRowActions';
+import { useEffect, useState, useTransition } from 'react';
 
+export default function AdminArticlesPage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [isPending, startTransition] = useTransition();
 
-export default async function AdminArticlesPage() {
-  const articles = await getArticles();
+  const fetchArticles = () => {
+    getArticles().then(setArticles);
+  }
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const handleDelete = (id: string) => {
+    const formData = new FormData();
+    formData.append('id', id);
+    startTransition(async () => {
+      await deleteArticle(formData);
+      fetchArticles(); // Refetch after delete
+    });
+  }
 
   return (
     <div>
@@ -53,7 +66,7 @@ export default async function AdminArticlesPage() {
           </TableHeader>
           <TableBody>
             {articles.map((article) => (
-              <ArticleRow key={article.id} article={article} />
+              <ArticleRow key={article.id} article={article} onDelete={handleDelete} isPending={isPending}/>
             ))}
           </TableBody>
         </Table>
@@ -65,7 +78,7 @@ export default async function AdminArticlesPage() {
   );
 }
 
-function ArticleRow({ article }: { article: Article }) {
+function ArticleRow({ article, onDelete, isPending }: { article: Article, onDelete: (id: string) => void, isPending: boolean }) {
   const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -85,7 +98,11 @@ function ArticleRow({ article }: { article: Article }) {
         {formattedDate}
       </TableCell>
       <TableCell>
-        <ArticleRowActions articleId={article.id} />
+        <ArticleRowActions 
+          articleId={article.id} 
+          onDelete={() => onDelete(article.id)} 
+          isDeleting={isPending}
+        />
       </TableCell>
     </TableRow>
   )

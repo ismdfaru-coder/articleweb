@@ -9,19 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from 'lucide-react';
-import { deleteArticle } from '../actions';
-import { useTransition } from 'react';
 
-export function ArticleRowActions({ articleId }: { articleId: string }) {
-  const [isPending, startTransition] = useTransition();
-
-  const handleDelete = () => {
-    const formData = new FormData();
-    formData.append('id', articleId);
-    startTransition(async () => {
-      await deleteArticle(formData);
-    });
-  };
+export function ArticleRowActions({ articleId, onDelete, isDeleting }: { articleId: string, onDelete: () => void, isDeleting: boolean }) {
 
   return (
     <DropdownMenu>
@@ -37,8 +26,8 @@ export function ArticleRowActions({ articleId }: { articleId: string }) {
             Edit
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete} disabled={isPending} className="text-destructive focus:text-destructive focus:bg-destructive/10">
-          {isPending ? 'Deleting...' : 'Delete'}
+        <DropdownMenuItem onClick={onDelete} disabled={isDeleting} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+          {isDeleting ? 'Deleting...' : 'Delete'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

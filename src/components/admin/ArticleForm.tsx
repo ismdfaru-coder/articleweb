@@ -66,10 +66,10 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
       content: '',
       imageUrl: 'https://picsum.photos/seed/1/1200/800',
       imageHint: '',
-      categoryId: '',
       author: 'Admin User',
       authorAvatarUrl: 'https://picsum.photos/seed/admin/40/40',
       featured: false,
+      categoryId: '',
     };
 
   const form = useForm<ArticleFormValues>({
@@ -90,8 +90,8 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
       const result = await saveArticle(formData);
       if (result.success) {
         router.push('/admin/articles');
+        router.refresh(); 
       } else {
-        // In a real app, you would handle the error, e.g., show a toast.
         console.error(result.error);
       }
     });
