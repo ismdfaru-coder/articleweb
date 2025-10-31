@@ -3,11 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
+import { useArticles } from '@/hooks/use-articles';
 
 import type { Article, Category } from '@/lib/types';
-import { saveArticle } from '@/app/admin/actions';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -50,12 +49,13 @@ type ArticleFormValues = z.infer<typeof formSchema>;
 type ArticleFormProps = {
   article?: Article;
   categories: Category[];
+  onSaveSuccess: () => void;
+  onCancel: () => void;
 };
 
-export function ArticleForm({ article, categories }: ArticleFormProps) {
-  const router = useRouter();
+export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: ArticleFormProps) {
   const [isAiDialogOpen, setAiDialogOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const { saveArticle, isLoading } = useArticles();
 
   const defaultValues: Partial<ArticleFormValues> = article
     ? { ...article, imageHint: article.imageHint || '' }
@@ -78,19 +78,9 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ArticleFormValues) => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
-      }
-    });
-
-    startTransition(async () => {
-      // The saveArticle action now handles the redirect.
-      // We no longer need to call router.push() here.
-      await saveArticle(formData);
-    });
+  const onSubmit = async (data: ArticleFormValues) => {
+    await saveArticle(data);
+    onSaveSuccess();
   };
   
   const generateSlug = () => {
@@ -244,11 +234,11 @@ export function ArticleForm({ article, categories }: ArticleFormProps) {
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => router.push('/admin/articles')}>
+          <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? 'Saving...' : 'Save Article'}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Saving...' : 'Save Article'}
           </Button>
         </div>
       </form>

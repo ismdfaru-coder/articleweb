@@ -1,72 +1,30 @@
 'use server';
 
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { z } from 'zod';
+import { revalidateTag } from 'next/cache';
 import { 
   saveArticle as dbSaveArticle, 
   deleteArticle as dbDeleteArticle,
   saveCategory as dbSaveCategory,
-  deleteCategory as dbDeleteCategory
+  deleteCategory as dbDeleteCategory,
+  getArticles as dbGetArticles,
 } from '@/lib/data';
 import { optimizeContent as optimizeContentFlow, type OptimizeContentInput } from '@/ai/flows/optimize-content-for-engagement';
-import { redirect } from 'next/navigation';
+import type { Article } from '@/lib/types';
 
-const articleSchema = z.object({
-  id: z.string().optional(),
-  title: z.string().min(1, 'Title is required'),
-  content: z.string().min(1, 'Content is required'),
-  excerpt: z.string().min(1, 'Excerpt is required'),
-  slug: z.string().min(1, 'Slug is required'),
-  imageUrl: z.string().url('Must be a valid URL'),
-  imageHint: z.string().optional(),
-  author: z.string().min(1, 'Author is required'),
-  authorAvatarUrl: z.string().url('Must be a valid URL'),
-  categoryId: z.string().min(1, 'Category is required'),
-  featured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
-});
-
-function formatContent(content: string): string {
-  // Split by one or more newlines, filter out empty lines, and wrap in <p> tags.
-  return content
-    .split(/\n\s*\n/)
-    .filter(p => p.trim())
-    .map(p => `<p>${p.trim()}</p>`)
-    .join('\n');
+export async function getArticles() {
+  const articles = await dbGetArticles();
+  return articles;
 }
 
-export async function saveArticle(formData: FormData) {
-  const rawData = Object.fromEntries(formData.entries());
-  const validated = articleSchema.safeParse(rawData);
-
-  if (!validated.success) {
-    console.error(validated.error.flatten().fieldErrors);
-    return { success: false, error: 'Invalid data' };
-  }
-
-  const dataToSave = {
-    ...validated.data,
-    content: formatContent(validated.data.content)
-  };
-
-
-  const savedArticle = await dbSaveArticle(dataToSave);
-  
+export async function saveArticle(article: Omit<Article, 'id' | 'category' | 'createdAt'> & { id?: string }): Promise<Article> {
+  const savedArticle = await dbSaveArticle(article);
   revalidateTag('articles');
-  revalidatePath('/admin/articles');
-  revalidatePath('/');
-  revalidatePath(`/articles/${validated.data.slug}`);
-
-  redirect('/admin/articles');
+  return savedArticle;
 }
 
-export async function deleteArticle(formData: FormData) {
-  const id = formData.get('id') as string;
-  if (!id) return;
-
+export async function deleteArticle(id: string): Promise<void> {
   await dbDeleteArticle(id);
   revalidateTag('articles');
-  revalidatePath('/admin/articles');
-  revalidatePath('/');
 }
 
 export async function createCategory(formData: FormData) {
@@ -74,9 +32,7 @@ export async function createCategory(formData: FormData) {
   if (name) {
     await dbSaveCategory({ name });
     revalidateTag('categories');
-    revalidatePath('/admin/categories');
-    revalidatePath('/admin/articles/new');
-    revalidatePath('/admin/articles/edit/.*'); // Revalidate all edit pages
+    revalidateTag('articles');
   }
 }
 
@@ -85,9 +41,10 @@ export async function deleteCategory(formData: FormData) {
     const id = formData.get('id') as string;
     await dbDeleteCategory(id);
     revalidateTag('categories');
-    revalidatePath('/admin/categories');
+    revalidateTag('articles');
   } catch (error) {
     console.error(error);
+    // In a real app, you'd return this error to the UI
   }
 }
 
