@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { deleteArticle } from '../actions';
-import { PlusCircle, Trash2, FilePenLine } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,15 +20,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { useEffect, useState }from 'react';
+import { use } from 'react';
 import type { Article } from '@/lib/types';
 
 export default function AdminArticlesPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  
-  useEffect(() => {
-    getArticles().then(setArticles);
-  }, []);
+  const articles = use(getArticles());
 
   return (
     <div>
@@ -70,12 +66,11 @@ export default function AdminArticlesPage() {
 }
 
 function ArticleRow({ article }: { article: Article }) {
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const formattedDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString() : '';
+  const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
     <TableRow>
@@ -87,7 +82,7 @@ function ArticleRow({ article }: { article: Article }) {
         </Badge>
       </TableCell>
       <TableCell>
-        {isClient ? formattedDate : <div className="h-4 bg-muted w-24 rounded-md animate-pulse" />}
+        {formattedDate}
       </TableCell>
       <TableCell>
         <DropdownMenu>
