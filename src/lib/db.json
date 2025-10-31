@@ -31,8 +31,8 @@
       "imageUrl": "https://images.unsplash.com/photo-1626444170626-303f62d83718?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMGdlb21ldHJ5fGVufDB8fHx8MTc2MTkwOTg5MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "abstract geometry",
       "featured": false,
-      "author": "Alex Innovate",
-      "authorAvatarUrl": "https://picsum.photos/seed/author1/40/40",
+      "author": "Admin User",
+      "authorAvatarUrl": "https://picsum.photos/seed/admin/40/40",
       "createdAt": "2024-07-20T10:00:00Z",
       "categoryId": "1"
     },
@@ -45,8 +45,8 @@
       "imageUrl": "https://images.unsplash.com/photo-1614595737683-1740e41bfaac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzYxODMzNTE4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "modern architecture",
       "featured": false,
-      "author": "Samantha Focus",
-      "authorAvatarUrl": "https://picsum.photos/seed/author2/40/40",
+      "author": "Admin User",
+      "authorAvatarUrl": "https://picsum.photos/seed/admin/40/40",
       "createdAt": "2024-07-19T14:30:00Z",
       "categoryId": "2"
     },
@@ -59,8 +59,8 @@
       "imageUrl": "https://images.unsplash.com/photo-1601321268954-22646044f7d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3cml0aW5nJTIwbm90ZWJvb2t8ZW58MHx8fHwxNzYxODk1ODE2fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "writing notebook",
       "featured": false,
-      "author": "Chloe Groove",
-      "authorAvatarUrl": "https://picsum.photos/seed/author3/40/40",
+      "author": "Admin User",
+      "authorAvatarUrl": "https://picsum.photos/seed/admin/40/40",
       "createdAt": "2024-07-18T09:00:00Z",
       "categoryId": "3"
     },
@@ -73,8 +73,8 @@
       "imageUrl": "https://images.unsplash.com/photo-1698219096320-f0cf708d425e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjaXR5JTIwZHVza3xlbnwwfHx8fDE3NjE4OTMzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "city dusk",
       "featured": false,
-      "author": "Marcus Aurelius Jr.",
-      "authorAvatarUrl": "https://picsum.photos/seed/author4/40/40",
+      "author": "Admin User",
+      "authorAvatarUrl": "https://picsum.photos/seed/admin/40/40",
       "createdAt": "2024-07-17T18:00:00Z",
       "categoryId": "4"
     },
@@ -87,8 +87,8 @@
       "imageUrl": "https://images.unsplash.com/photo-1702794130211-8fdb84960cce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmb3Jlc3QlMjBjYW5vcHl8ZW58MHx8fHwxNzYxOTA5ODg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "forest canopy",
       "featured": false,
-      "author": "Alex Innovate",
-      "authorAvatarUrl": "https://picsum.photos/seed/author1/40/40",
+      "author": "Admin User",
+      "authorAvatarUrl": "https://picsum.photos/seed/admin/40/40",
       "createdAt": "2024-07-16T11:00:00Z",
       "categoryId": "1"
     },
@@ -101,8 +101,8 @@
       "imageUrl": "https://images.unsplash.com/photo-1635987391914-cb84b567e68f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb21wdXRlciUyMGtleWJvYXJkfGVufDB8fHx8MTc2MTkwOTg4OXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "computer keyboard",
       "featured": false,
-      "author": "Samantha Focus",
-      "authorAvatarUrl": "https://picsum.photos/seed/author2/40/40",
+      "author": "Admin User",
+      "authorAvatarUrl": "https://picsum.photos/seed/admin/40/40",
       "createdAt": "2024-07-15T16:20:00Z",
       "categoryId": "2"
     },
@@ -127,3 +127,4 @@
     }
   ]
 }
+    
