@@ -16,12 +16,10 @@ export function useAuth() {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    // On initial load, try to retrieve auth state from localStorage.
     try {
       const storedAuth = localStorage.getItem(AUTH_KEY);
       if (storedAuth) {
         const { username } = JSON.parse(storedAuth);
-        // We only set the state if a username exists, the layout will handle verification
         if (username) {
             setAuthState({ isAuthenticated: true, username });
         }
@@ -41,7 +39,6 @@ export function useAuth() {
       if (isValid) {
         setAuthState({ isAuthenticated: true, username });
         try {
-          // Store a simple flag or username to indicate session
           localStorage.setItem(AUTH_KEY, JSON.stringify({ username }));
         } catch (e) {
           console.error("Could not access localStorage", e);
