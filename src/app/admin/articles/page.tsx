@@ -30,7 +30,16 @@ export default function AdminArticlesPage() {
   const router = useRouter();
 
   useEffect(() => {
-    getArticles().then(setArticles);
+    // Fetch articles on mount and whenever the component is focused
+    // to ensure the list is fresh after navigation.
+    const fetchArticles = () => getArticles().then(setArticles);
+    
+    fetchArticles();
+    
+    window.addEventListener('focus', fetchArticles);
+    return () => {
+      window.removeEventListener('focus', fetchArticles);
+    };
   }, []);
   
   const handleDeleteArticle = (id: string) => {
@@ -85,18 +94,13 @@ export default function AdminArticlesPage() {
 }
 
 function ArticleRow({ article, onDelete, isPending }: { article: Article, onDelete: (id: string) => void, isPending: boolean }) {
-  const [isClient, setIsClient] = useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
   
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  const formattedDate = isClient ? new Date(article.createdAt).toLocaleDateString('en-US', {
+  const formattedDate = new Date(article.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }) : '';
+  });
 
 
   return (
@@ -109,7 +113,7 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
         </Badge>
       </TableCell>
       <TableCell>
-        {isClient ? formattedDate : <div className="h-5 bg-muted w-24 rounded-md animate-pulse" /> }
+        {formattedDate}
       </TableCell>
       <TableCell>
          <form ref={formRef} action={() => onDelete(article.id)} className="hidden">
