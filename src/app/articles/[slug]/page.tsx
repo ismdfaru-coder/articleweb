@@ -15,16 +15,17 @@ type ArticlePageProps = {
 export default function ArticlePage({ params }: ArticlePageProps) {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const { slug } = params;
 
   useEffect(() => {
-    getArticleBySlug(params.slug).then(articleData => {
+    getArticleBySlug(slug).then(articleData => {
       if (!articleData) {
         notFound();
       }
       setArticle(articleData);
       setLoading(false);
     });
-  }, [params.slug]);
+  }, [slug]);
   
   const formattedDate = article ? new Date(article.createdAt).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -54,9 +55,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
       <main className="flex-1">
         <article className="container mx-auto max-w-4xl px-4 py-8">
           <header className="mb-8">
-            <Badge variant="secondary" className="mb-4">
-              {article.category.name}
-            </Badge>
+            {article.category && (
+              <Badge variant="secondary" className="mb-4">
+                {article.category.name}
+              </Badge>
+            )}
             <h1 className="font-headline text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
               {article.title}
             </h1>
