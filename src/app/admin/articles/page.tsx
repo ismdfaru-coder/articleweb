@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { getArticles } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { useEffect, useState } from 'react';
+import type { Article } from '@/lib/types';
 
-export default async function AdminArticlesPage() {
-  const articles = await getArticles();
+export default function AdminArticlesPage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    getArticles().then(setArticles);
+  }, []);
 
   return (
     <div>

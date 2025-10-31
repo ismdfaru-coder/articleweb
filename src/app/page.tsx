@@ -1,5 +1,8 @@
+
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 import { getArticles } from '@/lib/data';
 import { Article } from '@/lib/types';
@@ -8,10 +11,27 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ArticleCard } from '@/components/ArticleCard';
 
-export default async function Home() {
-  const articles = await getArticles();
+export default function Home() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  
+  useEffect(() => {
+    getArticles().then(setArticles);
+  }, []);
+
   const featuredArticle = articles.find((a) => a.featured) || articles[0];
-  const recentArticles = articles.filter((a) => a.id !== featuredArticle.id).slice(0, 6);
+  const recentArticles = articles.filter((a) => a.id !== featuredArticle?.id).slice(0, 6);
+
+  if (!articles.length) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <div className="container mx-auto px-4 py-8 text-center">Loading articles...</div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -38,6 +58,16 @@ export default async function Home() {
 }
 
 function FeaturedArticle({ article }: { article: Article }) {
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    setFormattedDate(new Date(article.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }));
+  }, [article.createdAt]);
+
   return (
     <section>
       <Link href={`/articles/${article.slug}`} className="group block overflow-hidden rounded-lg">
@@ -70,11 +100,7 @@ function FeaturedArticle({ article }: { article: Article }) {
               <div>
                 <p className="font-semibold">{article.author}</p>
                 <p className="text-sm text-muted-foreground">
-                  {new Date(article.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  {formattedDate}
                 </p>
               </div>
             </div>

@@ -1,9 +1,12 @@
+'use client';
 import { getArticleBySlug } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { useEffect, useState } from 'react';
+import type { Article } from '@/lib/types';
 
 type ArticlePageProps = {
   params: {
@@ -11,11 +14,34 @@ type ArticlePageProps = {
   };
 };
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
-  const article = await getArticleBySlug(params.slug);
+export default function ArticlePage({ params }: ArticlePageProps) {
+  const [article, setArticle] = useState<Article | null>(null);
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    getArticleBySlug(params.slug).then(articleData => {
+      if (!articleData) {
+        notFound();
+      }
+      setArticle(articleData);
+      setFormattedDate(new Date(articleData.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }));
+    });
+  }, [params.slug]);
 
   if (!article) {
-    notFound();
+    return (
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">
+            <div className="container mx-auto max-w-4xl px-4 py-8 text-center">Loading article...</div>
+          </main>
+          <Footer />
+        </div>
+      );
   }
 
   return (
@@ -41,12 +67,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <div>
                 <p className="font-semibold">{article.author}</p>
                 <p className="text-sm text-muted-foreground">
-                  Published on{' '}
-                  {new Date(article.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  Published on {formattedDate}
                 </p>
               </div>
             </div>
