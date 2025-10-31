@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { use } from 'react';
+import { use, startTransition } from 'react';
 import type { Article } from '@/lib/types';
 
 export default function AdminArticlesPage() {
@@ -72,6 +72,14 @@ function ArticleRow({ article }: { article: Article }) {
     day: 'numeric',
   });
 
+  const handleDelete = () => {
+    const formData = new FormData();
+    formData.append('id', article.id);
+    startTransition(() => {
+      deleteArticle(formData);
+    });
+  }
+
   return (
     <TableRow>
       <TableCell className="font-medium">{article.title}</TableCell>
@@ -98,12 +106,9 @@ function ArticleRow({ article }: { article: Article }) {
                  Edit
               </Link>
             </DropdownMenuItem>
-            <form action={deleteArticle}>
-               <input type="hidden" name="id" value={article.id} />
-               <button type="submit" className="w-full">
-                 <DropdownMenuItem>Delete</DropdownMenuItem>
-               </button>
-            </form>
+             <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                Delete
+             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
