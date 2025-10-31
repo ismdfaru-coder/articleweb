@@ -69,10 +69,10 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
       slug: '',
       excerpt: '',
       content: '',
-      imageUrl: 'https://picsum.photos/seed/1/1200/800',
+      imageUrl: `https://picsum.photos/seed/${Math.random()}/1200/800`,
       imageHint: '',
-      author: 'Admin User',
-      authorAvatarUrl: 'https://picsum.photos/seed/admin/40/40',
+      author: '',
+      authorAvatarUrl: `https://picsum.photos/seed/${Math.random()}/40/40`,
       featured: false,
       categoryId: '',
     };
@@ -220,6 +220,34 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="author"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Author</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Author's name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="authorAvatarUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Author Avatar URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://..." {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
