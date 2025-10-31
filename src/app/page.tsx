@@ -81,9 +81,11 @@ function FeaturedArticle({ article }: { article: Article }) {
             />
           </div>
           <div className="mt-4 flex flex-col justify-center md:mt-0">
-            <Badge variant="secondary" className="w-fit">
-              {article.category.name}
-            </Badge>
+            {article.category && (
+              <Badge variant="secondary" className="w-fit">
+                {article.category.name}
+              </Badge>
+            )}
             <h1 className="font-headline mt-4 text-3xl font-bold tracking-tight text-foreground/90 group-hover:text-foreground md:text-4xl lg:text-5xl">
               {article.title}
             </h1>
