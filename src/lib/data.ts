@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag, unstable_cache } from 'next/cache';
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache';
 import type { Article, Category } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -29,7 +29,7 @@ let articles: Article[] = [
     `,
     imageUrl: PlaceHolderImages[0].imageUrl,
     imageHint: PlaceHolderImages[0].imageHint,
-    featured: true,
+    featured: false,
     author: 'Alex Innovate',
     authorAvatarUrl: 'https://picsum.photos/seed/author1/40/40',
     createdAt: '2024-07-20T10:00:00Z',
