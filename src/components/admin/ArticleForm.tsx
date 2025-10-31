@@ -71,8 +71,8 @@ export function ArticleForm({ article, categories, onSaveSuccess, onCancel }: Ar
       content: '',
       imageUrl: `https://picsum.photos/seed/${Math.random()}/1200/800`,
       imageHint: '',
-      author: '',
-      authorAvatarUrl: `https://picsum.photos/seed/${Math.random()}/40/40`,
+      author: 'Admin User',
+      authorAvatarUrl: `https://picsum.photos/seed/admin/40/40`,
       featured: false,
       categoryId: '',
     };
