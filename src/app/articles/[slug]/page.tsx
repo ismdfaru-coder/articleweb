@@ -16,7 +16,7 @@ type ArticlePageProps = {
 
 export default function ArticlePage({ params }: ArticlePageProps) {
   const [article, setArticle] = useState<Article | null>(null);
-  const [formattedDate, setFormattedDate] = useState<string | null>(null);
+  const [formattedDate, setFormattedDate] = useState<string>('');
 
   useEffect(() => {
     getArticleBySlug(params.slug).then(articleData => {
@@ -72,11 +72,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                {formattedDate && (
+                {formattedDate ? (
                   <p className="text-sm text-muted-foreground">
                     Published on {formattedDate}
                   </p>
-                )}
+                ) : <div className="h-4 bg-muted w-32 rounded-md animate-pulse mt-1" />}
               </div>
             </div>
           </header>

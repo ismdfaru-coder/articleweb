@@ -99,9 +99,12 @@ function FeaturedArticle({ article }: { article: Article }) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                <p className="text-sm text-muted-foreground">
-                  {formattedDate}
-                </p>
+                {formattedDate ? (
+                  <p className="text-sm text-muted-foreground">
+                    {formattedDate}
+                  </p>
+                ) : <div className="h-4 bg-muted w-24 rounded-md animate-pulse mt-1" />
+                }
               </div>
             </div>
           </div>

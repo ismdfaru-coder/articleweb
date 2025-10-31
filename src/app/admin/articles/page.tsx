@@ -20,15 +20,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState }from 'react';
 import type { Article } from '@/lib/types';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [formattedDates, setFormattedDates] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     getArticles().then(setArticles);
   }, []);
+
+  useEffect(() => {
+    if (articles.length > 0) {
+      const dates = articles.reduce((acc, article) => {
+        acc[article.id] = new Date(article.createdAt).toLocaleDateString();
+        return acc;
+      }, {} as {[key: string]: string});
+      setFormattedDates(dates);
+    }
+  }, [articles]);
 
   return (
     <div>
@@ -66,7 +77,7 @@ export default function AdminArticlesPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {new Date(article.createdAt).toLocaleDateString()}
+                  {formattedDates[article.id] || '...'}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
