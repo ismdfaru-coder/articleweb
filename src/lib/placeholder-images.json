@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "Abstract geometric patterns",
+      "imageUrl": "https://images.unsplash.com/photo-1626444170626-303f62d83718?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMGdlb21ldHJ5fGVufDB8fHx8MTc2MTkwOTg5MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract geometry"
+    },
+    {
+      "id": "2",
+      "description": "Modern architecture with clean lines",
+      "imageUrl": "https://images.unsplash.com/photo-1614595737683-1740e41bfaac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzYxODMzNTE4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern architecture"
+    },
+    {
+      "id": "3",
+      "description": "A person writing in a notebook",
+      "imageUrl": "https://images.unsplash.com/photo-1601321268954-22646044f7d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3cml0aW5nJTIwbm90ZWJvb2t8ZW58MHx8fHwxNzYxODk1ODE2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "writing notebook"
+    },
+    {
+      "id": "4",
+      "description": "A bustling city street at dusk",
+      "imageUrl": "https://images.unsplash.com/photo-1698219096320-f0cf708d425e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjaXR5JTIwZHVza3xlbnwwfHx8fDE3NjE4OTMzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city dusk"
+    },
+    {
+      "id": "5",
+      "description": "Lush green forest canopy",
+      "imageUrl": "https://images.unsplash.com/photo-1702794130211-8fdb84960cce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmb3Jlc3QlMjBjYW5vcHl8ZW58MHx8fHwxNzYxOTA5ODg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "forest canopy"
+    },
+    {
+      "id": "6",
+      "description": "Close-up of a computer keyboard",
+      "imageUrl": "https://images.unsplash.com/photo-1635987391914-cb84b567e68f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb21wdXRlciUyMGtleWJvYXJkfGVufDB8fHx8MTc2MTkwOTg4OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "computer keyboard"
+    },
+    {
+      "id": "7",
+      "description": "A collection of old books on a shelf",
+      "imageUrl": "https://images.unsplash.com/photo-1595123550441-d377e017de6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxvbGQlMjBib29rc3xlbnwwfHx8fDE3NjE4OTgyMTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "old books"
+    },
+    {
+      "id": "8",
+      "description": "Minimalist desk setup",
+      "imageUrl": "https://images.unsplash.com/photo-1518655048521-f130df041f66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwZGVza3xlbnwwfHx8fDE3NjE4MzgyMTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist desk"
+    }
+  ]
 }
