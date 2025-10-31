@@ -5,21 +5,37 @@ import { verifyAdminCredentials } from '@/app/actions/auth';
 
 const AUTH_KEY = 'life-reality-auth';
 
+type AuthState = {
+  isAuthenticated: boolean;
+  username: string | null;
+}
+
 export function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [authState, setAuthState] = React.useState<AuthState>({ isAuthenticated: false, username: null });
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    try {
-      const storedAuth = localStorage.getItem(AUTH_KEY);
-      if (storedAuth === 'true') {
-        setIsAuthenticated(true);
+    const checkAuth = async () => {
+      setIsLoading(true);
+      try {
+        const storedAuth = localStorage.getItem(AUTH_KEY);
+        if (storedAuth) {
+          const { username } = JSON.parse(storedAuth);
+          // We don't have the password, but we can re-validate the username conceptually
+          // For this simple example, we'll trust the localStorage entry if it exists.
+          // In a real app, this would involve a session token checked against a server.
+          setAuthState({ isAuthenticated: true, username });
+        } else {
+          setAuthState({isAuthenticated: false, username: null });
+        }
+      } catch (e) {
+        console.error("Could not access localStorage", e);
+        setAuthState({isAuthenticated: false, username: null });
       }
-    } catch (e) {
-      console.error("Could not access localStorage", e);
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+    checkAuth();
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
@@ -28,12 +44,12 @@ export function useAuth() {
     try {
       const isValid = await verifyAdminCredentials({ username, password });
       if (isValid) {
-        setIsAuthenticated(true);
-        localStorage.setItem(AUTH_KEY, 'true');
+        setAuthState({ isAuthenticated: true, username });
+        localStorage.setItem(AUTH_KEY, JSON.stringify({ username }));
         return true;
       } else {
         setError('Invalid username or password');
-        setIsAuthenticated(false);
+        setAuthState({ isAuthenticated: false, username: null });
         return false;
       }
     } catch (e) {
@@ -45,7 +61,7 @@ export function useAuth() {
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    setAuthState({ isAuthenticated: false, username: null });
     try {
       localStorage.removeItem(AUTH_KEY);
     } catch (e) {
@@ -53,5 +69,5 @@ export function useAuth() {
     }
   };
 
-  return { isAuthenticated, isLoading, login, logout, error };
+  return { isAuthenticated: authState.isAuthenticated, isLoading, login, logout, error };
 }
