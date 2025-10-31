@@ -5,37 +5,35 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import type { Article } from '@/lib/types';
 
 type ArticlePageProps = {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 };
 
-export default function ArticlePage({ params }: ArticlePageProps) {
+export default function ArticlePage({ params: paramsPromise }: ArticlePageProps) {
+  const params = use(paramsPromise);
   const [article, setArticle] = useState<Article | null>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setIsClient(true);
     getArticleBySlug(params.slug).then(articleData => {
       if (!articleData) {
         notFound();
       }
       setArticle(articleData);
+      setLoading(false);
     });
   }, [params.slug]);
-
+  
   const formattedDate = article ? new Date(article.createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }) : '';
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }) : '';
 
-
-  if (!article) {
+  if (loading) {
     return (
         <div className="flex min-h-screen flex-col">
           <Header />
@@ -45,6 +43,11 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           <Footer />
         </div>
       );
+  }
+
+  // This should not happen if loading is handled correctly, but it's a good guard.
+  if (!article) {
+    return notFound();
   }
 
   return (
@@ -69,11 +72,9 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               />
               <div>
                 <p className="font-semibold">{article.author}</p>
-                {isClient ? (
-                  <p className="text-sm text-muted-foreground">
-                    Published on {formattedDate}
-                  </p>
-                ) : <div className="h-5 bg-muted w-32 rounded-md animate-pulse mt-1" />}
+                <p className="text-sm text-muted-foreground">
+                  Published on {formattedDate}
+                </p>
               </div>
             </div>
           </header>
