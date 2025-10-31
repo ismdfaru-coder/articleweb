@@ -16,15 +16,19 @@ import { deleteArticle } from '../actions';
 import { PlusCircle } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { ArticleRowActions } from './ArticleRowActions';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition, useCallback } from 'react';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  const fetchArticles = React.useCallback(() => {
+  const fetchArticles = useCallback(() => {
+    console.log('Fetching articles...');
     startTransition(() => {
-      getArticles().then(setArticles);
+      getArticles().then(data => {
+        console.log('Fetched articles:', data.length);
+        setArticles(data);
+      });
     });
   }, []);
 
@@ -33,9 +37,13 @@ export default function AdminArticlesPage() {
   }, [fetchArticles]);
   
   // Re-fetch articles when the window gets focus. This ensures that
-  // if the user navigates away and comes back, the data is fresh.
+  // if the user navigates away (e.g., to the edit page) and comes back,
+  // the data is fresh. This is the most reliable way to bypass client-side cache.
   useEffect(() => {
-    const handleFocus = () => fetchArticles();
+    const handleFocus = () => {
+      console.log('Window focused, refetching articles.');
+      fetchArticles();
+    }
     window.addEventListener('focus', handleFocus);
     return () => {
       window.removeEventListener('focus', handleFocus);
@@ -48,7 +56,8 @@ export default function AdminArticlesPage() {
     formData.append('id', id);
     startTransition(async () => {
       await deleteArticle(formData);
-      fetchArticles(); // Refetch after delete
+      // After the action completes, fetch articles again to update the list.
+      fetchArticles();
     });
   }
 
@@ -104,11 +113,15 @@ function ArticleRow({ article, onDelete, isPending }: { article: Article, onDele
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = () => {
-    setIsDeleting(true);
-    onDelete(article.id);
+    if (confirm('Are you sure you want to delete this article?')) {
+      setIsDeleting(true);
+      onDelete(article.id);
+    }
   }
 
-  // If a transition is happening, but it's not this row's delete, don't show deleting state.
+  // If a global transition is happening (e.g. fetching), but it's not this row's delete,
+  // we don't want every row to show a "deleting" state. isDeleting handles this.
+  // When the global transition finishes, we can reset our local deleting state.
   useEffect(() => {
     if (!isPending) {
       setIsDeleting(false);
