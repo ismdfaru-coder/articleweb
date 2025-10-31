@@ -56,6 +56,8 @@ export async function createCategory(formData: FormData) {
   if (name) {
     await dbSaveCategory({ name });
     revalidatePath('/admin/categories');
+    revalidatePath('/admin/articles/new');
+    revalidatePath('/admin/articles/edit');
   }
 }
 
